@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import "./App.css";
 import { Admin } from "./Components/Admin";
@@ -34,9 +34,10 @@ function App() {
         <Navbar>
            <NavLogo title={"Ivontory"} />
            <IconInput className="navsearch" Icon={FaSearch}  placeholder={"Search.."}/>
-           <div onClick={handleFilterOpen} className={`filter mobile ${navState.filterOpen? 'active': ''} `}>
+          { navState.isFilterOn && <div onClick={handleFilterOpen} className={`filter mobile ${navState.filterOpen? 'active': ''} `}>
              { navState.filterOpen ? <FiX /> : <FaBars /> }
            </div>
+          }     
         </Navbar>
         <Routes>
           <Route path="/" element={ <Home /> } />

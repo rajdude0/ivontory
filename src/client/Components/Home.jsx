@@ -4,10 +4,12 @@ import { Product, ProductBox } from "./Product";
 import { FilterBox } from "./FilterBox";
 import { makeAPI } from "../lib/API";
 import { DataContext } from "./DataContext";
+import { NavContext } from "./NavContext";
 
 export const Home = ({ children }) => {
     
     const {inventory, setInventory } = useContext(DataContext);
+    const { setNavState, useNavState } = useContext(NavContext);
     
     const api = makeAPI();
     const x = 1;
@@ -18,6 +20,13 @@ export const Home = ({ children }) => {
          setInventory(resp);
         })()
     }, [x])
+
+    useEffect(()=> {
+            setNavState(prev => ({
+                ...prev, isFilterOn: true
+            }))
+    }, [])
+
    
 
 
@@ -28,7 +37,7 @@ export const Home = ({ children }) => {
             count={count}
             price={price}/>)
             }
-
+            {inventory.length === 0 && <h3>Uh! Such Emptiness</h3>}
          </ProductBox>
     </div>
 }

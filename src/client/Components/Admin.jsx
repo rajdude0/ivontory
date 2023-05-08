@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import "./Admin.css"
 import { AddMoreColorItem, OptionBox, Dropdown, DropdownColorItem, DropdownItem, IconInput, ImageDrop, OptionItem, Textarea, CheckBox, Button } from "./Input"
 import { FaLock, FaTshirt, FaRecycle, FaUpload, VscNewFile, FaDollarSign, RiNumbersFill } from "react-icons/all"
 import { makeAPI } from "../lib/API"
 import { toast  } from "react-toastify";
+import { NavContext } from "./NavContext"
 
 export const Admin = () => {
     const [size, setSize] = useState([]);
@@ -11,6 +12,14 @@ export const Admin = () => {
     const [gender, setGender] = useState([]);
     const [brands, setBrands] = useState([]);
     const [category, setCategory] = useState([]);
+
+    const { setNavState, useNavState } = useContext(NavContext);
+
+    useEffect(()=> {
+            setNavState(prev => ({
+                ...prev, isFilterOn: false
+            }))
+    }, [])
 
 
     const [success, setSucces] = useState(false)
