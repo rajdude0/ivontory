@@ -33,8 +33,9 @@
 .navlogo h3 {
     margin-right: 20px;
     font-weight: 700;
-    font-size: 50px;
-    line-height: 50px;
+    font-size: 34px;
+    line-height: 25px;
+    padding: 50%;
     cursor: pointer;
     color: var(--text_color_primary);
 }
