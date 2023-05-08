@@ -3,3 +3,12 @@
     grid-template-columns: 150px auto;
     align-items: flex-start;
 }
+
+
+@media screen and (max-width: 860px) {
+    .home {
+        grid-template-columns: 0 auto;
+    }
+  }
+
+

@@ -3,7 +3,17 @@
    
     align-items:unset;
     position: relative;;
+
 }
+
+
+@media screen and (max-width:  860px) {
+    .filterbox {
+        height: 100vh;
+    }
+
+  }
+
 
 .filtercontainer {
     position: absolute;
@@ -13,9 +23,34 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding: 50px 40px;
+    padding: 50px 30px 50px 30px;
+    margin-right: 10px;
     gap: 30px;
+    background-color: var(--main_box_color);
+    z-index: 4;
+    height: 100%;
+    overflow: auto;
 }
+
+@media screen and (max-width:  860px) {
+    .filterbox {
+        height: 100vh;
+    }
+    .filtercontainer {
+        display: none;
+    }
+
+    .filtercontainer.close {
+        display: none;
+    }
+
+    .filtercontainer.open {
+        display: flex;
+    }
+
+    
+  }
+
 
 .filtercontainer .filtertype {
     display: flex;

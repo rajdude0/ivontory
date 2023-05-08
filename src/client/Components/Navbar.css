@@ -12,6 +12,7 @@
 .navbar.container {
     max-height: 130px;
     overflow: hidden;
+    position: relative;
 }
 
 .navbar .navitem {
@@ -48,8 +49,26 @@
     width: 30%;
 }
 
-@media screen and (max-width: 450px) {
+.navbar .filter.mobile {
+    display: none;
+    position: absolute;
+    bottom: 15%;
+    left: 30px;
+    font-size: 30px;
+}
+
+.navbar .filter.mobile.active {
+    /* color: var(--text_color_higlight); */
+    font-weight: 900;
+    font-size: 34px;
+}
+
+@media screen and (max-width:  860px) {
     .navbar .search {
         width: 48%;
+    }
+
+    .navbar .filter.mobile {
+        display: block;
     }
   }

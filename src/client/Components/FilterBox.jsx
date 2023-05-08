@@ -3,6 +3,7 @@ import "./FilterBox.css";
 import { CheckBox, OptionBox, OptionItem } from "./Input";
 import { makeAPI } from "../lib/API";
 import { DataContext } from "./DataContext";
+import { NavContext } from "./NavContext";
 
 
 export const FilterType = ({ name , children=[] , direction="column" }) => {
@@ -20,6 +21,7 @@ export const FilterBox = ({}) => {
     const [category, setCategory] = useState([]);
 
     const {inventory, setInventory} = useContext(DataContext)
+    const { navState, setNavState } = useContext(NavContext);
 
     const [state, setState] = useState({});
 
@@ -78,8 +80,8 @@ export const FilterBox = ({}) => {
 
 
     return <div className="filterbox">
-           <div className="filtercontainer">
-        
+           <div className={`filtercontainer ${!navState.filterOpen ? 'close': 'open'}`}>
+              
                 <FilterType name={"Size"} >
                      <OptionBox name="size" type="text" options={size} onChange={handleChange}  OptionRenderer={OptionItem}/>
                 </FilterType>
@@ -101,7 +103,7 @@ export const FilterBox = ({}) => {
                     <FilterType name={"Gender"}>
                        { gender.map(item => <CheckBox name={item.name} key={item.key}  value={item.value} onChange={(e) => hanldeCheckBoxChange({name:'gender', value: e })} label={item.name}/>)}                       
                     </FilterType>
-              
+                
            </div>
     </div>
 }
