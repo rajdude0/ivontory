@@ -1,5 +1,5 @@
 import { useCallback, useState, useEffect, useMemo, useRef } from "react"
-import "./input.css"
+import "./Input.css"
 import { FaSearch, FaCaretDown, FaCaretUp, FaPlus, FaCheck, FaMinusCircle, FaArrowCircleDown, FaDownload } from "react-icons/fa"
 import { useDropzone } from "react-dropzone"
 import { SketchPicker } from "react-color" 

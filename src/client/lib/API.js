@@ -1,7 +1,7 @@
 import { toast } from "react-toastify";
 import { HOST, HTTPS, PORT } from "../config/agent";
 
-export const APIURL = `${HTTPS ? 'https://' : 'http://'}${HOST}:${PORT}`;
+export const APIURL = ``;
 
 const defaultHeader = { "Content-Type": "application/json" }
 
