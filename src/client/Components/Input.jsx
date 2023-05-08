@@ -218,13 +218,6 @@ export const ImageDrop = ({ name, onChange = () => {}, onUpload, reset}) => {
             })
     }
 
-    const handleFile = ({target}) => {
-        const { files } = target;
-        setUploadFiles(prev => {
-            return [...prev, files[0]]
-        })
-    }
-
     useEffect(() => {
         // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
         return () => files.forEach(file => URL.revokeObjectURL(file.preview));
@@ -248,9 +241,7 @@ export const ImageDrop = ({ name, onChange = () => {}, onUpload, reset}) => {
   return (
     <section className="imagedrop">
       <div {...getRootProps({className: 'dropzone', isDragAccept, isFocused, isDragReject})}>
-        <input {...getInputProps({
-            onChange: (e) => handleFile(e)
-        })} />
+        <input {...getInputProps()} />
         <FaArrowCircleDown size={"2em"}/> 
         <p> Drag 'n' drop some files here, or click to select files</p>
       </div>
