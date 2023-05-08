@@ -1,0 +1,404 @@
+
+.textinput input {
+    width: 100%;
+    height: 50px;
+    padding-left: 20px;
+    box-sizing: border-box;
+    color: var(--text_color_primary);
+    font-size: 16px;
+    outline: none;
+    border:none;
+}
+
+.textinput {
+    border-radius: 15px;
+    border: 1px solid var(--text_color_primary);
+    overflow: hidden;
+    width: 100%;
+}
+
+.textinput .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    height: 30px;
+    width: 60px;
+    align-self: center;
+    font-size: 20px;
+    background-color: var(--text_color_primary);
+    color: var(--main_box_color);
+    stroke-width: 2px;
+}
+
+.textinput .icon svg {
+    display: block;
+}
+
+.textinput.search {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.textinput::placeholder {
+    color: var(--text_color_secondary);
+    font-size: 24px;
+    font-weight: 300;
+}
+
+.radioinput {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 5px;
+}
+
+.optionitem {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    display: flex;
+    font-size: 14px;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--text_color_primary);
+    color: #fff;
+    cursor: pointer;
+    border: 3px solid transparent;
+}
+
+.optionitem:not(.color).selected {
+    background-color: var(--text_color_higlight);
+}
+
+.optionitem.color.selected {
+    border: 3px solid var(--text_color_higlight);
+    opacity: 1;
+}
+
+.optionitem.color:not(.selected) {
+    opacity: 0.8;
+}
+
+
+.dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.dropdown .dropdowninput {
+    position: relative;
+    height:50px;
+    border: 1px solid var(--text_color_primary);
+    background-color: #fff;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+
+.dropdown .dropdowninput .value {
+    padding-left: 20px;
+}
+
+.dropdown .options {
+    position: absolute;
+    z-index: 2;
+    left: 0;
+    top: 100%;
+    right: 0;
+    text-decoration: none;
+    list-style: none;
+    width: 100%;
+    padding: 0;
+    margin-top: 5px;
+    border: 0.5px solid var(--text_color_secondary);
+}
+
+.dropdown .options .addmoreitem {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0;
+    box-sizing: border-box;
+    background-color: #fff;
+    border-top: .5px solid var(--text_color_secondary);
+}
+
+
+
+
+.dropdown .options .addmoreitem input {
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 0px 20px;
+    font-size: 14px;
+}
+
+.dropdown .options .addmoreitem.hasshort input {
+    padding: 0px 10px;
+}
+
+
+.dropdown .options .addmoreitem.color {
+    position: relative;
+    padding-left: 10px;
+}
+
+.dropdown .options .addmoreitem.color .picker {
+    position: absolute;
+    top: -90px;
+    left: 60px;
+    cursor: pointer;
+    z-index: 3;
+}
+
+.dropdown .options .addmoreitem.color input {
+    width: 100%;
+    padding: 5px;
+    font-size: 14px;
+}
+
+.dropdown .options .addmoreitem.color .color {
+    display: flex;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    cursor: pointer;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.dropdown .options .addmoreitem.color .color:hover {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+
+
+
+.dropdown .options .addmoreitem .add {
+    height: 42px;
+    border: none;
+    width: 60px;
+    background-color: var(--text_color_higlight);
+    color: #fff;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.dropdown .options .addmoreitem .add:hover {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.dropdown .options .addmoreitem .add:active {
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+}
+
+.dropdown .dropdowninput .icon {
+    position: absolute;
+    right: 20px;
+    top: 17px;
+}
+.dropdown .dropdownitem {
+    background-color: #fff;
+    padding: 10px 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.dropdown .dropdownitem.color {
+    display: flex;
+    align-items: center;
+}
+
+.dropdown .dropdownitem.color .color {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.dropdown .dropdownitem:first,
+.dropdown .dropdownitem:last-of-type {
+    border-radius: 5px;
+}
+
+
+.dropdown .dropdownitem:not(.addmore):hover {
+    background-color: var(--text_color_higlight);
+}
+
+.textarea {
+    border: 1px solid var(--text_color_primary);
+    max-height: 300px;
+    border-radius: 15px;
+    resize: none;
+    padding: 10px 20px;
+    font-size: 17px;
+    box-sizing: border-box;
+    outline: none;
+}
+
+
+.imagedrop {
+    background-color: #fff;
+    border: 1px solid var(--text_color_primary);
+    border-radius: 15px;
+}
+
+.imagedrop .dropzone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 20px;
+    height: 120px;
+    border-bottom: 0.5px solid var(--text_color_secondary);
+    cursor: pointer;
+}
+
+.imagedrop .dropzone p {
+    font-weight: bold;
+}
+
+.imagedrop .preview {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+    min-height: 80px;
+    overflow: scroll;
+}
+
+.imagedrop .preview .name {
+     position: relative;
+}
+
+.imagedrop .preview .remove {
+    position: absolute;
+    top:-22px;
+    right:-17px;
+    padding: 10px;
+    height: 40px;
+    width: 40px;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.imagedrop .preview .remove svg {
+    display: block;
+}
+
+
+.imagedrop .upload {    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.imagedrop .preview .inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 10px;
+}
+
+.imagedrop .preview .inner img {
+    height: auto;
+    width: 120px;
+}
+
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.checkbox .box {
+    height: 20px;
+    width: 20px;
+    border: 2px solid var(--text_color_primary);
+    border-radius: 5px;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.checkbox .label {
+    
+}
+
+.button {
+   background-color: var(--text_color_primary);
+   color: #fff;
+   font-size: 24px; 
+   border-radius: 15px;
+   padding: 20px;
+   cursor: pointer;
+   border: none;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   box-shadow: rgba(0, 0, 0, 0.18) 0px 2px 4px;
+}
+
+.button .icon {
+    margin-right: 10px;
+    display: flex;
+    align-self: center;
+}
+.button.big {
+    font-size: 24px;
+}
+
+.button.medium {
+    padding: 18px;
+    font-size: 17px;
+}
+
+.button.small {
+    padding: 10px;
+    font-size: 12px;
+}
+
+.button:active {
+    opacity: 85%;
+}
+
+.button:hover {
+    /* box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px; */
+}
+
+.button.secondary {
+       background-color: #fff;
+       color: var(--text_color_primary);
+}
+
+.button.tertiary {
+    background-color: var(--text_color_higlight);
+    color: #ffff;
+}
+
+.button.tertiary:active {
+   box-shadow:  rgba(50, 50, 93, 0.25) 0px -25px 28px -15px inset, rgba(0, 0, 0, 0.3) 0px 18px 0px -19px inset;
+}
+
+.button:active {
+     box-shadow: rgba(169, 169, 185, 0.25) 0px -25px 28px -15px inset, rgba(210, 200, 200, 0.3) 0px 18px 0px -19px inset 
+}
+
+.button.secondary:active {
+     box-shadow:  rgba(50, 50, 93, 0.25) 0px -25px 28px -15px inset, rgba(0, 0, 0, 0.3) 0px 18px 0px -19px inset 
+}

@@ -1,0 +1,59 @@
+version: "3.7"
+services:
+  ivontory:
+    build:
+      args:
+        user: ivontory
+        uid: 1000
+      context: ./
+      dockerfile: Dockerfile
+    image: ivontory
+    container_name: ivontory-app
+    restart: unless-stopped
+    working_dir: /var/www/
+    command: npm i
+    environment:
+      - PG_USER=postgres
+      - PG_HOST=db
+      - PG_PASSWORD=password
+      - PG_PORT=5432
+    # volumes:
+    #   - ./dist:/var/www
+    #   - ./src/server:/var/www/src/server
+    #   - ./package.json:/var/www/package.json
+    #   - ./index.html:/var/www/index.html
+    #   - ./vite.config.js:/var/www/vite.config.js
+    networks:
+      - ivontory-net
+
+  db:
+    image: postgres:latest
+    container_name: ivontory-db
+    restart: unless-stopped
+    ports:
+        - 5432:5432
+    environment:
+      POSTGRES_DB: ivontory
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ./docker-compose/postgres:/docker-entrypoint-initdb.d
+    networks:
+      - ivontory-net
+
+  nginx:
+    image: nginx:1.17-alpine
+    container_name: ivontory-nginx
+    restart: unless-stopped
+    ports:
+      - 80:80
+    volumes:
+      - ./:/var/www
+      - ./docker-compose/nginx:/etc/nginx/conf.d
+    networks:
+      - ivontory-net
+
+
+networks:
+  ivontory-net:
+    driver: bridge

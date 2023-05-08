@@ -1,0 +1,133 @@
+.productbox {
+    display: grid;
+    grid-template-columns: auto auto;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding-top: 50px;
+    margin-top: 30px;
+}
+
+
+@media screen and (max-width: 450px) {
+    .productbox {
+        grid-template-columns: auto;
+    }
+  }
+
+@media screen and (min-width: 1024px) {
+    .productbox {
+        grid-template-columns: auto auto auto auto;
+    }
+  }
+
+.product-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.product {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    width: 200px;
+    position: relative;
+    border: 3px solid #fff;
+    overflow: hidden;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.product:hover {
+    border: 3px solid var(--text_color_higlight);
+}
+
+
+.product .images {
+    display: flex;
+    justify-content: center;
+    align-items: center;    
+}
+
+.product  .indicators {
+    z-index: 2;
+    position: absolute;
+    bottom: 10px;
+    right:0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+}
+
+.product  .indicators .indicator {
+    padding: 2px;
+    margin: 0 3px;
+    height: 1px;   
+    width: 1px;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.product  .indicators .indicator.active {
+    background-color: var(--text_color_higlight);
+}
+
+.product  .indicators .indicator:hover {
+    background-color: white;
+}
+
+.product  img {
+    display: none;
+    height: 400px;
+    width: auto;
+}
+
+.product .images img.active {
+    display: block;
+}
+
+.product-container .details {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.product-container .details .brand {
+    font-weight: 900;
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: var(--text_color_secondary)
+}
+
+.product-container .details .title {
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: 0px;
+    overflow: hidden;
+    max-width: 190px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    
+}
+
+.product-container .details .price {
+   display: flex;
+   align-items: center;
+   justify-content: flex-start;
+}
+
+.product-container .details .price svg {
+    margin-right: 5px;
+}
+
+.product-container .price h4 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--text_color_higlight)
+}

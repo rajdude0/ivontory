@@ -1,0 +1,42 @@
+.filterbox {
+    height: 100%;
+   
+    align-items:unset;
+    position: relative;;
+}
+
+.filtercontainer {
+    position: absolute;
+    left: 0;
+    width: 200px;
+    height: 100%;
+    border-right: 0.5px solid var(--text_color_secondary);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 50px 40px;
+    gap: 30px;
+}
+
+.filtercontainer .filtertype {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.filtercontainer .filtertype .radioinput {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+}
+
+.filtercontainer .filtertype.row {
+    flex-direction: row
+}
+
+.filtercontainer .filtername {
+    font-size: 18px;
+    font-weight: bold;
+    width: 150px;
+    margin-bottom: 10px;
+    border-bottom: 0.5px solid var(--text_color_secondary);
+}

@@ -1,0 +1,49 @@
+.navbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding:30px 0px;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0 0px;
+    border-bottom: 0.5px solid var(--text_color_secondary);
+}
+
+.navbar.container {
+    max-height: 130px;
+    overflow: hidden;
+}
+
+.navbar .navitem {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.navlogo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-height: 60px;
+    overflow: hidden;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+  
+.navlogo h3 {
+    margin-right: 20px;
+    font-weight: 700;
+    font-size: 50px;
+    line-height: 50px;
+    cursor: pointer;
+    color: var(--text_color_primary);
+}
+
+.navlogo img {
+    margin-top: -10%;
+    height: auto;
+    width: 100%;
+}
+
+.navbar .search {
+    width: 30%;
+}

@@ -1,0 +1,5 @@
+.home {
+    display: grid;
+    grid-template-columns: 150px auto;
+    align-items: flex-start;
+}

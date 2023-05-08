@@ -1,0 +1,29 @@
+.admin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+}
+
+.admin .container {
+    display: flex;
+    width: 600px;
+    gap: 15px;
+   
+    flex-direction: column;
+}
+
+.flex {
+    display: flex;
+    gap: 10px;
+}
+
+.flex.right {
+    justify-content: flex-end;
+}
+
+.flex.center {
+    justify-content: center;
+}
+   
