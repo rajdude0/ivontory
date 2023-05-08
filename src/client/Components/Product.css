@@ -6,15 +6,9 @@
     gap: 20px;
     padding-top: 50px;
     margin-top: 30px;
+    height: 100vh;
+    overflow: auto;
 }
-
-@media screen and (max-width:  860px) {
-    .productbox {
-        height: 100vh;
-        overflow: auto;
-    }
-  }
-
 
 @media screen and (max-width: 860px) {
     .productbox {
