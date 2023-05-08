@@ -6,7 +6,7 @@ import { NavItem, NavLogo, Navbar } from "./Components/Navbar";
 
 import { Home } from "./Components/Home";
 import { IconInput } from "./Components/Input";
-import { FaSearch, FaBars, FiX } from "react-icons/all";
+import { FaSearch, FaBars, FiX, FaInstagram } from "react-icons/all";
 import { DataContext, DataContextProvider } from "./Components/DataContext";
 import { NavContext, NavContextProvider } from './Components/NavContext';
 import { ToastContainer } from "react-toastify"
@@ -38,6 +38,7 @@ function App() {
              { navState.filterOpen ? <FiX /> : <FaBars /> }
            </div>
           }     
+          <a  className="iglogo" href="https://www.instagram.com/multiverse_tmbs/"><FaInstagram className="iglogo"/></a>
         </Navbar>
         <Routes>
           <Route path="/" element={ <Home /> } />

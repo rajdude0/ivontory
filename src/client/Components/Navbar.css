@@ -40,6 +40,14 @@
     color: var(--text_color_primary);
 }
 
+.iglogo {
+    position: absolute;
+    top:10px;
+    right: 10px;
+    font-size: 30px;
+    text-decoration: none;
+    color: var(--text_color_primary)
+}
 .navlogo img {
     margin-top: -10%;
     height: auto;
