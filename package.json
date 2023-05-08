@@ -22,6 +22,7 @@
     "react-dropzone": "^14.2.3",
     "react-icons": "^4.8.0",
     "react-router-dom": "^6.11.1",
+    "react-toastify": "^9.1.2",
     "superagent": "^8.0.9",
     "vite-express": "*"
   },

@@ -219,7 +219,7 @@ apiRouter.post('/upload', async (req, res, next) => {
     return res.status(400).json({error: "bad data"});
 })
 
-apiRouter.post("/createBrand", [stringValidate('brandName'), stringValidate('origin')], async (req, res, next) => {
+apiRouter.post("/createBrand", [stringValidate('name'), stringValidate('origin')], async (req, res, next) => {
        mrValidate(next, req, res);
        const { name, origin } = req.body;
        try {

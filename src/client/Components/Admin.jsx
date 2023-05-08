@@ -3,6 +3,7 @@ import "./Admin.css"
 import { AddMoreColorItem, OptionBox, Dropdown, DropdownColorItem, DropdownItem, IconInput, ImageDrop, OptionItem, Textarea, CheckBox, Button } from "./Input"
 import { FaLock, FaTshirt, FaRecycle, FaUpload, VscNewFile, FaDollarSign, RiNumbersFill } from "react-icons/all"
 import { makeAPI } from "../lib/API"
+import { toast  } from "react-toastify";
 
 export const Admin = () => {
     const [size, setSize] = useState([]);
@@ -57,21 +58,21 @@ export const Admin = () => {
 
 
     const addCategory = async (e) => {
-        const { value } = e;
-         const [{id}] = await api('/api/createCategory').post({ name: value});
-         setCategory(prev => ([...prev, {id, name: value}]))
+        const { primary } = e;
+         const [{id}] = await api('/api/createCategory').post({ name: primary});
+         setCategory(prev => ([...prev, {id, name: primary}]))
     }
 
     const addBrand = async (e) => {
-         const { value } = e;
-         const [{id}] = await api('/api/createBrand').post({ name: value});
-         setCategory(prev => ([...prev, {id, name: value}]))
+         const { primary, secondary } = e;  
+         const [{id}] = await api('/api/createBrand').post({ name: primary, ...secondary && {origin: secondary}});
+         setBrands(prev => ([...prev, {id, name: primary}]))
     }
 
     const addSize = async (e) => {
         const { primary, secondary } = e;
-        const [{id}] = await api('/api/createSize').post({ name: primary, short: secondary, size: " ", unit: "inch"});
-        setCategory(prev => ([...prev, {id, name: primary}]))
+        const [{id}] = await api('/api/createSize').post({ name: primary,  size: " ", unit: "inch", ...secondary && {short: secondary}});
+        setSize(prev => ([...prev, {id, name: primary}]))
    }
 
 
@@ -81,7 +82,7 @@ export const Admin = () => {
                 <Textarea name="description" placeholder={"Enter product description"}  onChange={handleChange} />
                 <div className="flex">
                     <Dropdown name="category" options={category} addMore={true} morePlaceholder="New Category" onChange={handleChange} onAddMore={addCategory}/>
-                    <Dropdown name="brands" options={brands} addMore={true} morePlaceholder="New Brand" onChange={handleChange} onAddMore={addBrand}/>
+                    <Dropdown name="brands" options={brands} addMore={true} morePlaceholder="New Brand" hasAddMoreMeta={true}  metaPlaceholder="Origin"  onChange={handleChange} onAddMore={addBrand}/>
                 </div>
                 <div className="flex">
                     <Dropdown name="gender" options={gender} onChange={handleChange} />

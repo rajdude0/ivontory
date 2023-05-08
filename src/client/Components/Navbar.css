@@ -47,3 +47,9 @@
 .navbar .search {
     width: 30%;
 }
+
+@media screen and (max-width: 450px) {
+    .navbar .search {
+        width: 48%;
+    }
+  }

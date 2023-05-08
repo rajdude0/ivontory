@@ -54,7 +54,7 @@ export const AddMoreTextItem = ({ onAdd, hasShort, morePlaceholder="Value", meta
 
     const handleAddMore = () => {
         onClick(value);
-        setValue('');
+        setValue({primary: '', secondary: ''});
     }
 
     const hanldeOnChange = ({target}) => {
@@ -162,8 +162,9 @@ export const Dropdown = ({ placeholder="New", name, options = [], onChange, defa
                 </div>
             </div>
              { toggle && <ul className="options">
-                { options.map((item) => <li key={item.key}><DropdownItemRender {...item} onClick={updateState} /></li>)}
                 { addMore && <li key="addmore"><AddMoreRenderer onClick={onAddMore} hasShort={hasAddMoreMeta} placeholder={name} morePlaceholder={morePlaceholder} metaPlaceholder={metaPlaceholder} /></li>}
+                { options.map((item) => <li key={item.key}><DropdownItemRender {...item} onClick={updateState} /></li>)}
+               
             </ul>
             } 
     </div>

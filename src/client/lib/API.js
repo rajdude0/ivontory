@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { HOST, HTTPS, PORT } from "../config/agent";
 
 export const APIURL = `${HTTPS ? 'https://' : 'http://'}${HOST}:${PORT}`;
@@ -25,17 +26,33 @@ export const makeAPI = ( BASEURL = APIURL, headers = defaultHeader ) => (ENDPOIN
         };
 }
 export const get = async (URL, headers = {}, query) => {
-    return fetch(`${URL}${query ? '?'+query: ''}`, {headers: { ...headers }}).then(data => data.json());
+    const resp =  fetch(`${URL}${query ? '?'+query: ''}`, {headers: { ...headers }}).then(data => data.json());
+    if(resp.error) {
+        toast.error(resp.error);
+    }
+    return resp;
 }
 
 export const post = async (URL, headers = {}, payload = {}) => {
-    return fetch(URL,  { method: 'POST', headers: {...headers}, body: JSON.stringify(payload) }).then(data => data.json());
+    const resp = await fetch(URL,  { method: 'POST', headers: {...headers}, body: JSON.stringify(payload) }).then(data => data.json());
+    if(resp.error) {
+        toast.error(resp.error);
+    }
+    return resp;
 }
 
 export const _delete = async (URL, headers = {}, ) => {
-    return fetch(URL, { method: "DELETE", headers: { ...headers }}).then(data => data.json())
+    const resp = await fetch(URL, { method: "DELETE", headers: { ...headers }}).then(data => data.json())
+    if(resp.error) {
+        toast.error(resp.error);
+    }
+    return resp;
 }
 
 export const put = async (URL , headers = {}, payload = {}) => {
-    return fetch(URL, { method: 'PUT', headers: { ...headers}, body: JSON.stringify(payload) }).then(data => data.json());
+    const resp = await fetch(URL, { method: 'PUT', headers: { ...headers}, body: JSON.stringify(payload) }).then(data => data.json());
+    if(resp.error) {
+        toast.error(resp.error)
+    }
+    return resp;
 }
