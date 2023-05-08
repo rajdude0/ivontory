@@ -2,11 +2,11 @@ version: "3.7"
 services:
   ivontory:
     build:
-      args:
-        user: ivontory
-        uid: 1000
-      context: ./
-      dockerfile: Dockerfile
+        args:
+            user: ivontory
+            uid: 1000
+        context: ./
+        dockerfile: Dockerfile
     image: ivontory
     container_name: ivontory-app
     restart: unless-stopped
@@ -17,14 +17,10 @@ services:
       - PG_HOST=db
       - PG_PASSWORD=password
       - PG_PORT=5432
-    # volumes:
-    #   - ./dist:/var/www
-    #   - ./src/server:/var/www/src/server
-    #   - ./package.json:/var/www/package.json
-    #   - ./index.html:/var/www/index.html
-    #   - ./vite.config.js:/var/www/vite.config.js
+    volumes:
+      - ./:/var/www
     networks:
-      - ivontory-net
+        - ivontory-net
 
   db:
     image: postgres:latest

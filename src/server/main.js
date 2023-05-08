@@ -15,6 +15,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 
+app.use(express.static(path.join(path.resolve(), "public")))
 app.use(express.static(path.join(path.resolve(), "uploads")))
 
 
