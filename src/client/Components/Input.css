@@ -104,12 +104,12 @@
     padding-left: 20px;
 }
 
-@media screen and (max-width: 450px) {
+@media screen and (max-width:  860px) {
     .dropdown .dropdowninput .value {
         padding-left: 15px;
         max-width: 40px;
         white-space: pre-wrap;
-        
+
     }
 }
 
@@ -308,6 +308,12 @@
     padding: 20px;
     min-height: 80px;
     overflow: scroll;
+}
+
+@media screen and (max-width:  860px) {
+    .imagedrop .preview {
+        grid-template-columns: auto;
+    }
 }
 
 .imagedrop .preview .name {
