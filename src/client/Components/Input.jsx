@@ -5,12 +5,12 @@ import { useDropzone } from "react-dropzone"
 import { SketchPicker } from "react-color" 
 import { post } from "superagent"
 
-export const IconInput = ({ name, type, placeholder, onChange, size="big", Icon=FaSearch}) => {
+export const IconInput = ({ name, type, placeholder, onChange, size="big", Icon=FaSearch, required}) => {
     return <div tabIndex={0}  className="textinput search">
               <div className="icon">
                 <Icon />
               </div>
-            <input name={name} type={type} placeholder={placeholder} onChange={(e) => onChange(e.target)} />
+            <input name={name} type={type} placeholder={placeholder} onChange={(e) => onChange(e.target)} required={required}/>
         </div>
 }
 

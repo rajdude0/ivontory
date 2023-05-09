@@ -1,10 +1,11 @@
-import { useContext, useEffect, useState } from "react"
+import { useCallback, useContext, useEffect, useState } from "react"
 import "./Admin.css"
 import { AddMoreColorItem, OptionBox, Dropdown, DropdownColorItem, DropdownItem, IconInput, ImageDrop, OptionItem, Textarea, CheckBox, Button } from "./Input"
 import { FaLock, FaTshirt, FaRecycle, FaUpload, VscNewFile, FaDollarSign, RiNumbersFill } from "react-icons/all"
 import { makeAPI } from "../lib/API"
 import { toast  } from "react-toastify";
 import { NavContext } from "./NavContext"
+import { isDefined } from "../../server/utils"
 
 export const Admin = () => {
     const [size, setSize] = useState([]);
@@ -12,6 +13,8 @@ export const Admin = () => {
     const [gender, setGender] = useState([]);
     const [brands, setBrands] = useState([]);
     const [category, setCategory] = useState([]);
+
+    const [bump, forceBump ] = useState({});
 
     const { setNavState, useNavState } = useContext(NavContext);
 
@@ -24,19 +27,51 @@ export const Admin = () => {
 
     const [success, setSucces] = useState(false)
 
-    const [state, setState] = useState();
+    const emptyState = {
+        product: null,
+        description: null,
+        category: [],
+        brands: [],
+        gender: null,   
+        color: null,
+        size: null,
+        image: [],
+        price: null,
+        count: null,
+
+    }
+
+    const [state, setState] = useState(emptyState);
 
     const api = makeAPI();
 
-    console.log(state);
+
+    const mrGaurd = useCallback(() => {
+        const entries = Object.entries(state);
+        for (const [k,v] of entries) {
+           if(!isDefined(v) || (Array.isArray(v) && v.length ===0 )) {
+               toast.error(`${k} is not filled`)
+               if(k==="image") {
+                   toast.info("Please click on Upload to upload images!");
+               }
+               return false;
+           }
+        }
+        return true;
+   }, [state]);
 
     const onFormSubmit = async (e) => {
         e.preventDefault();
+        if(!mrGaurd()){
+            return ;
+        }
         const resp = await api('/api/createInventory').post(state);
         if(resp) {
             setSucces(resp);
         }
     }
+
+    
 
     useEffect(() => {
             (async () => {
@@ -85,7 +120,7 @@ export const Admin = () => {
    }
 
 
-    return <form onSubmit={onFormSubmit} method="post" className="admin">
+    return <form key={bump} onSubmit={onFormSubmit} method="post" className="admin">
             <div className="container">
                 <IconInput name="product" placeholder={"Enter product title"} onChange={handleChange} Icon={FaTshirt}/>
                 <Textarea name="description" placeholder={"Enter product description"}  onChange={handleChange} />
@@ -107,7 +142,7 @@ export const Admin = () => {
 
                 </div>
                 <div className="flex center">
-                    <Button Icon={VscNewFile} color="primary" size="medium" label={"Create New"} onClick={() => setState({})} />
+                    <Button Icon={VscNewFile} color="primary" size="medium" label={"Create New"} onClick={() => { setState(emptyState); forceBump(Math.random()) }  } />
                     <Button Icon={FaUpload} color="tertiary" size="medium" type="submit" label={"Publish Inventory"} onChange={handleChange} />
                 </div>
             </div>
