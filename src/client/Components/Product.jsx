@@ -13,7 +13,7 @@ export const Product = ({ name, images = [], id, price, brand, title}) => {
 
     const changeImage = (index, next) => {
         if(next) {
-            setImgIndex((index + 1) % iamges.length);
+            setImgIndex((index + 1) % images.length);
             return;
         }
         setImgIndex(index);

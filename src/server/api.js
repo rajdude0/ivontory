@@ -5,6 +5,7 @@ import { db } from "./db.js";
 import path from 'path'
 import { nanoid } from 'nanoid'
 import { groupBy } from "./util.js"
+import { decode } from "html-entities";
 
 export const apiRouter = Router();
 
@@ -223,7 +224,7 @@ apiRouter.post("/createBrand", [stringValidate('name'), stringValidate('origin')
        mrValidate(next, req, res);
        const { name, origin } = req.body;
        try {
-         const {rows} = await db.query('insert into brands (name, origin) values($1, $2) returning id', [name, origin]);
+         const {rows} = await db.query('insert into brands (name, origin) values($1, $2) returning id', [decode(name), decode(origin)]);
          return res.json(rows)
        } catch (e) {
             return mrError(next, res, e.detail)
@@ -264,25 +265,12 @@ apiRouter.post("/createGender", [stringValidate('name'), stringValidate('short')
     mrValidate(next, req, res);
     const { name, short } = req.body;
     try {
-        const {rows} = await db.query('insert into gender (name, short) values($1, $2) returning id', [name.toUpperCase(), short.toUpperCase()]);
+        const {rows} = await db.query('insert into gender (name, short) values($1, $2) returning id', [decode(name), decode(short)]);
         return res.json(rows)
     } catch (e) {
         return mrError(next, res, e.detail)
     }
 })
-
-
-apiRouter.post("/createGender", [stringValidate('name'), stringValidate('short')], async (req, res, next) => {
-    mrValidate(next, req, res);
-    const { name, short } = req.body;
-    try {
-        const {rows} = await db.query('insert into gender (name, short) values($1, $2) returning id', [name.toUpperCase(), short.toUpperCase()]);
-        return res.json(rows)
-    } catch (e) {
-        return mrError(next, res, e.detail)
-    }
-})
-
 
 
 apiRouter.get("/tags", async (req, res, next) => {  
@@ -298,7 +286,7 @@ apiRouter.post("/createtag", [stringValidate('name'), stringValidate('effecttype
     mrValidate(next, req, res);
     const { name, effecttype, effectvalue } = req.body;
     try {
-        const {rows} = await db.query('insert into tags (name, effecttype, effectvalue) values($1, $2, $3) returning id', [name, effecttype, effectvalue]);
+        const {rows} = await db.query('insert into tags (name, effecttype, effectvalue) values($1, $2, $3) returning id', [decode(name), decode(effecttype), decode(effectvalue)]);
         return res.json(rows)
     } catch (e) {
         return mrError(next, res, e.detail)
@@ -319,7 +307,7 @@ apiRouter.post("/createProduct", [stringValidate('name'), stringValidate('descri
     mrValidate(next, req, res);
     const { name, description, tagid, brandid, categoryid } = req.body;
     try {
-        const {rows} = await db.query('insert into product (name, description, tagid, brandid, categoryid) values($1, $2, $3, $4, $5) returning id', [name, description, tagid, brandid, categoryid]);
+        const {rows} = await db.query('insert into product (name, description, tagid, brandid, categoryid) values($1, $2, $3, $4, $5) returning id', [decode(name), decode(description), tagid, brandid, categoryid]);
         return res.json(rows)
     } catch (e) {
         return mrError(next, res, e.detail)
@@ -342,7 +330,7 @@ apiRouter.post("/createSize", [stringValidate('name'), stringValidate('short'), 
     mrValidate(next, req, res);
     const { name, short, size, unit } = req.body;
     try {
-        const {rows} = await db.query('insert into size (name, short, size, unit) values($1, $2, $3, $4) returning id', [name, short, size, unit]);
+        const {rows} = await db.query('insert into size (name, short, size, unit) values($1, $2, $3, $4) returning id', [decode(name), decode(short), decode(size), decode(unit)]);
         return res.json(rows)
     } catch (e) {
         return mrError(next, res, e.detail)
@@ -363,7 +351,7 @@ apiRouter.post("/createColor", [stringValidate('name'), stringValidate('code')],
     mrValidate(next, req, res);
     const { name, code } = req.body;
     try {
-        const {rows} = await db.query('insert into color (name, code) values($1, $2) returning id', [name, code]);
+        const {rows} = await db.query('insert into color (name, code) values($1, $2) returning id', [decode(name), decode(code)]);
         return res.json(rows)
     } catch (e) {
         return mrError(next, res, e.detail)
@@ -380,7 +368,7 @@ apiRouter.post("/createStock", [uuidValidate('productid'), uuidValidate('sizeid'
          const sgid = result.rows[0].id;
           result = await db.query("insert into sizecolor (sizegenderid, colorid) values ($1, $2) returning id", [sgid, colorid]);
          const scid = result.rows[0].id;
-         const { rows } = await db.query("insert into stock (productid, sizecolorid, count, price) values ($1, $2, $3, $4 ) returning id", [productid, scid, count, price]);
+         const { rows } = await db.query("insert into stock (productid, sizecolorid, count, price) values ($1, $2, $3, $4 ) returning id", [productid, scid, +count, +price]);
          return res.json(rows)
     } catch (e) {
         return mrError(next, res, e.detail);
