@@ -7,8 +7,10 @@ import { nanoid } from 'nanoid'
 import { groupBy } from "./util.js"
 import { decode } from "html-entities";
 
-export const apiRouter = Router();
 
+
+
+export const apiRouter = Router();
 
 
 const mrError = (next, res, err) => {
@@ -28,13 +30,6 @@ apiRouter.get("/", (req, res) => {
     return res.send("We have received you!");
 })
 
-const runQuery = async (query="", args=[], res) => {
-    try {
-        return await db.query(query, args);
-    } catch (e) {
-        return res.status(400).json({error: e.detail})
-     }
-}
 
 
 const getWhereClause = (key, placeholder = { }, value, multi=false,) => {
