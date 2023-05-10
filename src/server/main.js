@@ -77,14 +77,9 @@ app.use(fileupload(
 
 app.use("/api", apiRouter);
 
-app.use((err, req, res, next) => {
-  const errors = validationResult(req);
-   if (!errors.isEmpty()) {
-     res.status(400)
-      return next(errors.errors);
-     }
-    next(err)
-})
+ app.use((err, req, res, next) => {
+      next(err)
+ })
 
 
 app.use("/admin", passport.authenticate('basic', {
