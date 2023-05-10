@@ -31,7 +31,7 @@ export const FilterBox = ({}) => {
         (async () => {
         const urlEncoded = Object.entries(state).reduce((acc, [k, v]) => {
             const encodeEntity =  v ? Array.isArray(v) ? v.map(l => `${encodeURIComponent(k)}=${encodeURIComponent(l)}`).join('&') : `${encodeURIComponent(k)}=${encodeURIComponent(v)}`: ''
-            const res = acc ? acc + `&${encodeEntity}`: encodeEntity; 
+            const res = encodeEntity ?  acc ? acc + `&${encodeEntity}`: encodeEntity : acc; 
             return res
         }, "")
         const resp = await api("/api/inventory").get(urlEncoded)
@@ -60,8 +60,9 @@ export const FilterBox = ({}) => {
                 const prevValue = prev[name];
                 if(prevValue) {
                     const newValue = prevValue.filter(b => b!== id)
-                    return { [name]: newValue};
+                    return { ...prev, [name]: newValue};
                 }
+                return { ...prev };
             }
         })
     }, []);
