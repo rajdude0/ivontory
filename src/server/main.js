@@ -78,7 +78,9 @@ app.use(fileupload(
 app.use("/api", apiRouter);
 
  app.use((err, req, res, next) => {
-      next(err)
+    if(err) {
+      res.status(res.statusCode || 500).json({error: err});
+    }
  })
 
 

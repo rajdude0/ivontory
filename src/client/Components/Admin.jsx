@@ -66,7 +66,7 @@ export const Admin = () => {
             return ;
         }
         const resp = await api('/api/createInventory').post(state);
-        if(resp) {
+        if(resp && !resp.hasOwnProperty('error')) {
             setSucces(resp);
             toast.success("Inventory created!")
         }
@@ -98,26 +98,26 @@ export const Admin = () => {
     const addColor = async (e) => {
         const { value, color } = e;
         const [{id}] = await api('/api/createColor').post({ name: value, code: color});
-        setColor(prev => ([...prev, {id, color, name: value}]))
+        setColor(prev => ([...prev, {id, value: id, color, name: value}]))
     }
 
 
     const addCategory = async (e) => {
         const { primary } = e;
          const [{id}] = await api('/api/createCategory').post({ name: primary});
-         setCategory(prev => ([...prev, {id, name: primary}]))
+         setCategory(prev => ([...prev, {id, value: id, name: primary}]))
     }
 
     const addBrand = async (e) => {
          const { primary, secondary } = e;  
          const [{id}] = await api('/api/createBrand').post({ name: primary, ...secondary && {origin: secondary}});
-         setBrands(prev => ([...prev, {id, name: primary}]))
+         setBrands(prev => ([...prev, {id, value:id, name: primary, origin: secondary}]))
     }
 
     const addSize = async (e) => {
         const { primary, secondary } = e;
         const [{id}] = await api('/api/createSize').post({ name: primary,  size: " ", unit: "inch", ...secondary && {short: secondary}});
-        setSize(prev => ([...prev, {id, name: primary}]))
+        setSize(prev => ([...prev, {id, value: id, name: primary, short: secondary}]))
    }
 
 
