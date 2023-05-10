@@ -68,6 +68,7 @@ export const Admin = () => {
         const resp = await api('/api/createInventory').post(state);
         if(resp) {
             setSucces(resp);
+            toast.success("Inventory created!")
         }
     }
 

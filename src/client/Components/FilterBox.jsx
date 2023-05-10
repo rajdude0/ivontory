@@ -58,8 +58,10 @@ export const FilterBox = ({}) => {
                 return { ...prev, [name]: prevValue ? [...prevValue, id]: [id]  }
             } else {
                 const prevValue = prev[name];
-                const newValue = prevValue.filter(b => b!== id)
-                return { [name]: newValue};
+                if(prevValue) {
+                    const newValue = prevValue.filter(b => b!== id)
+                    return { [name]: newValue};
+                }
             }
         })
     }, []);
