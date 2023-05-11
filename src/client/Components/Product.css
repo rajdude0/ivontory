@@ -41,7 +41,6 @@
 .product {
     display: flex;
     align-items: center;
-    justify-content: center;
     height: 350px;
     width: 250px;
     position: relative;
@@ -57,7 +56,10 @@
 
 
 .product .images {
-    display: flex;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateX(0);
     
 }
 
@@ -90,15 +92,14 @@
 }
 
 .product  img {
-    display: none;
     height: 350px;
     width: auto;
     object-fit: cover;
 }
 
-.product .images img.active {
+/* .product .images img.active {
     display: block;
-}
+} */
 
 .product-container .details {
     padding: 10px;
