@@ -1,7 +1,7 @@
 import { useCallback, useState, useRef } from "react"
 import "./Product.css";
 import { FaDollarSign, FaRupeeSign } from "react-icons/fa";
-
+import _ from "lodash";
 export const ProductBox = ({ children }) => {
     return <div className="productbox">
             {children}
@@ -76,11 +76,22 @@ export const Product = ({ name, images = [], id, price, brand, title}) => {
         if(isDragging) {
            const currentPosition = getPositionX(e);
            const crrT  = prevTranslate + currentPosition - startPos
-           console.log(prevTranslate, currentPosition, startPos, crrT)
-           setSliderPosition(e, crrT);
-           setCurrentTranslate(crrT); 
+
+
+           const isLeft = crrT  < 0; 
+           console.log("images rect",e.target.getBoundingClientRect());
+           console.log("prev", prevTranslate, "curr", currentPosition, "start", startPos, "appar", crrT)
+           if(images.length === 1) { return }
+           if(isLeft && imgIndex === images.length - 1 || !isLeft && imgIndex === 0 ) {
+              
+           } else {
+            setSliderPosition(e, crrT);
+            setCurrentTranslate(crrT); 
+           }
         }
-    }, [isDragging,  currentTranslate , prevTranslate, startPos])
+    }, [isDragging,  currentTranslate, imgIndex,  images , prevTranslate, startPos])
+
+    const touchEndThrottle = _.throttle(touchEnd, 500);
 
     return <div className="product-container">
             <div className="product">
@@ -88,12 +99,12 @@ export const Product = ({ name, images = [], id, price, brand, title}) => {
                     {images.map((src, i) => <img 
                             onDragStart={stopDefaultDrag}
                             onTouchStart={(e) => touchStart(i, e)}
-                            onTouchEnd={touchEnd}
+                            onTouchEnd={touchEndThrottle}
                             onTouchMove={touchMove}
 
                             onMouseDown={(e) => touchStart(i, e)}
-                            onMouseUp={touchEnd}
-                            onMouseLeave={touchEnd}
+                            onMouseUp={touchEndThrottle}
+                            onMouseLeave={touchEndThrottle}
                             onMouseMove={touchMove}
 
                             key={i} 

@@ -17,6 +17,7 @@
     "express-session": "^1.17.3",
     "express-validator": "^7.0.1",
     "html-entities": "^2.3.3",
+    "lodash": "^4.17.21",
     "nanoid": "^4.0.2",
     "passport": "^0.6.0",
     "passport-http": "^0.3.0",
@@ -28,6 +29,7 @@
     "react-icons": "^4.8.0",
     "react-router-dom": "^6.11.1",
     "react-toastify": "^9.1.2",
+    "react-touch-drag-slider": "2.2.3",
     "superagent": "^8.0.9",
     "uid-safe": "^2.1.5",
     "vite-express": "*"
