@@ -126,8 +126,8 @@ const getProductIfExist = async (productName) => {
             arrayValidate('image'),
             stringValidate('product'),
             objectValidate('size'),
-            stringValidate('count'),
-            stringValidate('price')
+            numberValidate('count'),
+            numberValidate('price')
      ], async(req, res, next) => {
         mrValidate(next, req, res);
         const { brands, category, color, description, gender, image, product, size, count, price, tagid } = req.body;
@@ -137,7 +137,7 @@ const getProductIfExist = async (productName) => {
             const {rows: product_id} = await db.query(`insert into product 
                             (name, description, tagid, brandid, categoryid) 
                             values 
-                            ($1, $2, $3, $4, $5) returning id`, [product, description, null, brands.value, category.value]);
+                            ($1, $2, $3, $4, $5) returning id`, [decode(product), decode(description), null, brands.value, category.value]);
                     productId = product_id[0].id;
             }
             
@@ -154,7 +154,7 @@ const getProductIfExist = async (productName) => {
 
             const { rows: img } = await db.query('insert into images (path, productid, sizecolorid) values ($1, $2, $3) returning id', [image, productId, sizeColorId]);
 
-            const { rows } = await db.query(`insert into stock (productid, sizecolorid, count, price) values ($1, $2, $3, $4) returning id`, [productId, sizeColorId, +count, +price]);
+            const { rows } = await db.query(`insert into stock (productid, sizecolorid, count, price) values ($1, $2, $3, $4) returning id`, [productId, sizeColorId, count, price]);
 
             return res.json({rows})
 
