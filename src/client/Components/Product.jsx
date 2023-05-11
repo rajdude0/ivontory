@@ -62,11 +62,11 @@ export const Product = ({ name, images = [], id, price, brand, title}) => {
 
         setImgIndex(prev => {
             
-            if (movedBy < -100 && imgIndex < images.length - 1) {
+            if (movedBy < -60 && imgIndex < images.length - 1) {
                prev= prev + 1;
             }
     
-            if (movedBy > 100 && imgIndex > 0) { 
+            if (movedBy > 60 && imgIndex > 0) { 
                 prev = prev -1;
             }
 
