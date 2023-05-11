@@ -17,7 +17,14 @@
     }
   }
 
-@media screen and (min-width: 1350px) {
+@media screen and (min-width: 1200px) {
+    .productbox {
+        grid-template-columns: auto auto auto;
+        gap: 50px
+    }
+  }
+
+  @media screen and (min-width: 1500px) {
     .productbox {
         grid-template-columns: auto auto auto auto;
         gap: 50px
