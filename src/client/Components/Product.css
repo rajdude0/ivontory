@@ -58,8 +58,7 @@
 
 .product .images {
     display: flex;
-    justify-content: center;
-    align-items: center;    
+    
 }
 
 .product  .indicators {
@@ -92,8 +91,9 @@
 
 .product  img {
     display: none;
-    height: 400px;
+    height: 350px;
     width: auto;
+    object-fit: cover;
 }
 
 .product .images img.active {
