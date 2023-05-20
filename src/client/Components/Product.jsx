@@ -1,4 +1,4 @@
-import { useCallback, useState, useRef } from "react"
+import { useCallback, useState, useRef, useEffect } from "react"
 import "./Product.css";
 import { FaDollarSign, FaRupeeSign } from "react-icons/fa";
 import _ from "lodash";
@@ -49,17 +49,14 @@ export const Product = ({ name, images = [], id, price, brand, title}) => {
     }, [])
 
     const touchStart = useCallback((i, e) => {
-        console.log("start")
         setIsDragging(true);
         setStartPos(getPositionX(e))
     }, [])
 
 
     const touchEnd = useCallback((e) => {
-        console.log("end")
-        setIsDragging(false)
         const movedBy = currentTranslate - prevTranslate
-
+       if(isDragging) {
         setImgIndex(prev => {
             
             if (movedBy < -60 && imgIndex < images.length - 1) {
@@ -74,22 +71,25 @@ export const Product = ({ name, images = [], id, price, brand, title}) => {
 
             return prev;
         });
+      }
+        setIsDragging(false)
 
-        
-
-    }, [currentTranslate, imgIndex, images, prevTranslate])
+    }, [currentTranslate, isDragging, imgIndex, images, prevTranslate])
 
     const touchMove = useCallback((e)=> {
         if(isDragging) {
             const currentPosition = getPositionX(e)
             const currentTranslate = prevTranslate + currentPosition - startPos;
-            console.log("Moving", currentTranslate, "prev", prevTranslate, "curr", currentPosition, "start", startPos);
             setCurrentTranslate(currentTranslate);
             setSliderPosition(currentTranslate);
         }
     }, [isDragging,  currentTranslate, imgIndex,  images , prevTranslate, startPos])
 
     const touchEndThrottle = _.throttle(touchEnd, 0);
+
+    useEffect(()=> {
+            console.log(isDragging);
+    }, [isDragging])
 
     return <div className="product-container">
             <div className="product">
@@ -101,6 +101,7 @@ export const Product = ({ name, images = [], id, price, brand, title}) => {
                             onTouchMove={touchMove}
 
                             onMouseDown={(e) => touchStart(i, e)}
+                            onMouseUpCapture={touchEndThrottle}
                             onMouseUp={touchEndThrottle}
                             onMouseLeave={touchEndThrottle}
                             onMouseMove={touchMove}
