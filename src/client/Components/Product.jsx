@@ -17,13 +17,24 @@ export const Product = ({ name, images = [], id, price, brand, title}) => {
 
     const sliderRef = useRef(null);
 
-    const changeImage = (index, next) => {
+
+    const  setPositionByIndex = useCallback((imgIndex, widthToMove) => {
+        const currentTranslate = imgIndex * - widthToMove; 
+        setPrevTranslate(currentTranslate);
+        setSliderPosition(currentTranslate)
+      }, [currentTranslate])
+      
+
+
+    const changeImage = useCallback((index, next, e) => {
         if(next) {
             setImgIndex((index + 1) % images.length);
             return;
         }
+        const images = e.target.parentElement.parentElement.children[0].children;
+        setPositionByIndex(index, images[index].clientWidth);
         setImgIndex(index);
-    }
+    }, [setPositionByIndex])
 
 
     const getPositionX = (event) => {
@@ -34,13 +45,6 @@ export const Product = ({ name, images = [], id, price, brand, title}) => {
         sliderRef.current.style.transform = `translateX(${currentTranslate}px)`;
     }
 
-
-    const  setPositionByIndex = useCallback((imgIndex, e) => {
-        const currentTranslate = imgIndex * - e.target.clientWidth;
-        setPrevTranslate(currentTranslate);
-        setSliderPosition(currentTranslate)
-      }, [currentTranslate])
-      
 
 
     const stopDefaultDrag = useCallback((e) => {
@@ -67,7 +71,7 @@ export const Product = ({ name, images = [], id, price, brand, title}) => {
                 prev = prev -1;
             }
 
-            setPositionByIndex(prev, e);
+            setPositionByIndex(prev, e.target.clientWidth);
 
             return prev;
         });
@@ -86,10 +90,6 @@ export const Product = ({ name, images = [], id, price, brand, title}) => {
     }, [isDragging,  currentTranslate, imgIndex,  images , prevTranslate, startPos])
 
     const touchEndThrottle = _.throttle(touchEnd, 0);
-
-    useEffect(()=> {
-            console.log(isDragging);
-    }, [isDragging])
 
     return <div className="product-container">
             <div className="product">
@@ -112,7 +112,7 @@ export const Product = ({ name, images = [], id, price, brand, title}) => {
                             />)}
                 </div>
                 <div className="indicators">
-                        {images.map((_, i)=> <div key={i} onClick={() => changeImage(i)} className={`indicator ${imgIndex === i ? 'active': ''} `}></div>)}
+                        {images.map((_, i)=> <div key={i} onClick={(e) => changeImage(i, null , e)} className={`indicator ${imgIndex === i ? 'active': ''} `}></div>)}
                 </div>
           </div>
           <div className="details">
