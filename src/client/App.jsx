@@ -6,7 +6,8 @@ import { NavItem, NavLogo, Navbar } from "./Components/Navbar";
 
 import { Home } from "./Components/Home";
 import { IconInput } from "./Components/Input";
-import { FaSearch, FaBars, FiX, FaInstagram } from "react-icons/all";
+import { FaSearch, FaBars, FaInstagram } from "react-icons/fa";
+import { Fix } from "react-icons/fi";
 import { DataContext, DataContextProvider } from "./Components/DataContext";
 import { NavContext, NavContextProvider } from './Components/NavContext';
 import { ToastContainer } from "react-toastify"

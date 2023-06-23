@@ -1,7 +1,10 @@
 import { useCallback, useContext, useEffect, useState } from "react"
 import "./Admin.css"
 import { AddMoreColorItem, OptionBox, Dropdown, DropdownColorItem, DropdownItem, IconInput, ImageDrop, OptionItem, Textarea, CheckBox, Button } from "./Input"
-import { FaLock, FaTshirt, FaRecycle, FaUpload, VscNewFile, FaDollarSign, RiNumbersFill } from "react-icons/all"
+import { FaLock, FaTshirt, FaRecycle, FaUpload, FaDollarSign } from "react-icons/fa"
+import { RiNumbersFill } from "react-icons/ri";
+import { VscNewFile } from 'react-icons/vsc';
+
 import { makeAPI } from "../lib/API"
 import { toast  } from "react-toastify";
 import { NavContext } from "./NavContext"

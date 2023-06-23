@@ -10,15 +10,11 @@ services:
     image: ivontory
     container_name: ivontory-app
     restart: unless-stopped
-    working_dir: /var/www/
-    command: npm i
     environment:
       - PG_USER=postgres
       - PG_HOST=db
       - PG_PASSWORD=password
       - PG_PORT=5432
-    volumes:
-      - ./:/var/www
     networks:
         - ivontory-net
 
