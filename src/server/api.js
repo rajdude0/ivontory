@@ -6,6 +6,7 @@ import path from 'path'
 import { nanoid } from 'nanoid'
 import { groupBy } from "./util.js"
 import { decode } from "html-entities";
+import { title } from "process";
 
 
 
@@ -286,7 +287,7 @@ apiRouter.post("/createtag", [stringValidate('name'), stringValidate('effecttype
     } catch (e) {
         return mrError(next, res, e.detail)
     }
-})
+});
 
 apiRouter.get("/products", async (req, res, next) => {
     try {
@@ -295,7 +296,7 @@ apiRouter.get("/products", async (req, res, next) => {
     } catch (e) {
         return mrError(next, res, e.detail)
     }
-})
+});
 
 
 apiRouter.post("/createProduct", [stringValidate('name'), stringValidate('description'),  uuidValidate('brandid'), uuidValidate('categoryid')], async (req, res, next) => {
@@ -307,7 +308,7 @@ apiRouter.post("/createProduct", [stringValidate('name'), stringValidate('descri
     } catch (e) {
         return mrError(next, res, e.detail)
     }
-})
+});
 
 
 apiRouter.get("/sizes", async (req, res, next) => {
@@ -318,7 +319,7 @@ apiRouter.get("/sizes", async (req, res, next) => {
     } catch (e) {
         return mrError(next, res, e.detail)
     }
-})
+});
 
 
 apiRouter.post("/createSize", [stringValidate('name'), stringValidate('short'),  stringValidate('size'), stringValidate('unit')], async (req, res, next) => {
@@ -330,7 +331,7 @@ apiRouter.post("/createSize", [stringValidate('name'), stringValidate('short'), 
     } catch (e) {
         return mrError(next, res, e.detail)
     }
-})
+});
 
 apiRouter.get("/colors", async (req, res, next) => {
     mrValidate(next, req, res);
@@ -340,7 +341,7 @@ apiRouter.get("/colors", async (req, res, next) => {
     } catch (e) {
         return mrError(next, res, e.detail)
     }
-})
+});
 
 apiRouter.post("/createColor", [stringValidate('name'), stringValidate('code')], async (req, res, next) => {
     mrValidate(next, req, res);
@@ -351,24 +352,48 @@ apiRouter.post("/createColor", [stringValidate('name'), stringValidate('code')],
     } catch (e) {
         return mrError(next, res, e.detail)
     }
-})
+});
 
 
 apiRouter.post("/createStock", [uuidValidate('productid'), uuidValidate('sizeid'), uuidValidate('genderid'), uuidValidate('colorid'), numberValidate('count'), numberValidate('price')], async (req, res, next) => {
     mrValidate(next, req, res);
     const {productid, sizeid, genderid, colorid, count, price } = req.body; 
-    let result = [];
+    let result;
     try {
-           result = await db.query("insert into sizegender (sizeid, genderid) values ($1, $2) returning id", [sizeid, genderid]);
+         result = await db.query("insert into sizegender (sizeid, genderid) values ($1, $2) returning id", [sizeid, genderid]);
          const sgid = result.rows[0].id;
-          result = await db.query("insert into sizecolor (sizegenderid, colorid) values ($1, $2) returning id", [sgid, colorid]);
+         result = await db.query("insert into sizecolor (sizegenderid, colorid) values ($1, $2) returning id", [sgid, colorid]);
          const scid = result.rows[0].id;
-         const { rows } = await db.query("insert into stock (productid, sizecolorid, count, price) values ($1, $2, $3, $4 ) returning id", [productid, scid, +count, +price]);
+         const { rows } = await db.query("insert into stock (productid, sizecolorid, count, price) values ($1, $2, $3, $4 ) returning id", [productid, scid, count, price]);
          return res.json(rows)
     } catch (e) {
         return mrError(next, res, e.detail);
     }
+});
+
+
+apiRouter.put("/updateStock", [uuidValidate('stockid'), numberValidate('count'), numberValidate('price')], async (req, res, next) => {
+    mrValidate(next, req, res);
+    const { stockid, count, price } = req.body;
+    try {
+      const { rows } = await db.query("update stock set count=$1, price=$2 where id=$3", [count, price, stockid]);
+      return res.json(rows);
+    } catch(e) {
+        return mrError(next, res, e.detail);
+    }
 })
+
+apiRouter.put("/updateProduct", [stringValidate('name'), stringValidate('description'), uuidValidate('tagid'), uuidValidate('brandid'), uuidValidate('categoryid')], async (req, res, next) => {
+    mrValidate(next, req, res);
+    const { name, text, tagid, brandid, categoryid} = req.body;
+    try {
+        const { rows } = await db.query("update product set name=$1, description=$2', tagid=$3, brandid=$4, categoryid=$5", [name, text, tagid, brandid, categoryid]);
+        return res.json(rows);
+    } catch(e) {
+        return mrError(next, res, e.detail);
+    }
+
+});
 
 
 

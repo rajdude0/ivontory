@@ -77,18 +77,18 @@ app.use(fileupload(
 
 app.use("/api", apiRouter);
 
- app.use((err, req, res, next) => {
-    if(err) {
-      res.status(res.statusCode || 500).json({error: err});
-    }
- })
-
-
 app.use("/admin", passport.authenticate('basic', {
   session: false
 }), (req, res, next) => {
     next();
 })
+
+app.use((err, req, res, next) => {
+  if(err) {
+    res.status(res.statusCode || 500).json({error: err});
+  }
+})
+
 
 
 ViteExpress.listen(app, 3000, () =>
