@@ -43,9 +43,7 @@
     align-items: center;
     height: 350px;
     width: 250px;
-    position: relative;
     border: 3px solid #fff;
-    overflow: hidden;
     border-radius: 4px;
     box-sizing: border-box;
 }
@@ -55,46 +53,6 @@
 }
 
 
-.product .images {
-    display: inline-flex;
-    align-items: center;
-    transform: translateX(0);
-    transition: transform 0.3s ease-in;
-}
-
-.product  .indicators {
-    z-index: 2;
-    position: absolute;
-    bottom: 10px;
-    right:0;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center; 
-}
-
-.product  .indicators .indicator {
-    padding: 2px;
-    margin: 0 3px;
-    height: 1px;   
-    width: 1px;
-    border-radius: 50%;
-    border: 2px solid white;
-}
-
-.product  .indicators .indicator.active {
-    background-color: var(--text_color_higlight);
-}
-
-.product  .indicators .indicator:hover {
-    background-color: white;
-}
-
-.product  img {
-    height: 350px;
-    width: 250px;
-    object-fit: cover;
-}
 
 /* .product .images img.active {
     display: block;

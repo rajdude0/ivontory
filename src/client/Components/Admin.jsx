@@ -138,7 +138,7 @@ export const Admin = () => {
                     <Dropdown name="size" options={size} onChange={handleChange} addMore={true} hasAddMoreMeta={true} morePlaceholder="Name"  metaPlaceholder="Short" onAddMore={addSize}/>
                 </div>
                 <div>
-                    <ImageDrop name="image" onUpload={handleChange} reset={success}/>
+                    <ImageDrop name="image" onUpload={handleChange} />
                 </div>
                 <div className="flex">
                    <IconInput Icon={FaDollarSign} name={"price"} onChange={handleChange} placeholder={"Enter Price"} />
@@ -147,7 +147,7 @@ export const Admin = () => {
                 </div>
                 <div className="flex center">
                     <Button Icon={VscNewFile} color="primary" size="medium" label={"Create New"} onClick={() => { setState(emptyState); forceBump(Math.random()) }  } />
-                    <Button Icon={FaUpload} color="tertiary" size="medium" type="submit" label={"Publish Inventory"} onChange={handleChange} />
+                    <Button Icon={FaUpload} color="tertiary" size="medium" type="submit" label={"Publish Inventory"} />
                 </div>
             </div>
     </form>
