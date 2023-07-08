@@ -4,6 +4,8 @@
     gap: 10px;
 }
 
+
+
 .slider-container {
     display: flex;
     align-items: center;
@@ -129,3 +131,20 @@
 .sliderbox .minimap .minimapimg.active {
     border: 3px solid var(--text_color_higlight);
 } 
+
+@media screen and (max-width:  450px) {
+    .sliderbox {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .sliderbox .minimap {
+        height: 100px;
+        width: auto;
+        max-width: calc(100vw - 40px);
+        overflow: auto;
+        flex-direction: row;
+        padding: 5px 0px;
+    }
+}

@@ -160,7 +160,7 @@ export const Slider = ({
                 </div>
               
         </div>
-        {showMiniMap && <div className="minimap" style={{maxHeight: height}}>
+        {showMiniMap && <div className="minimap" style={{maxHeight: height }}>
                 {images.map((src, i) => <img key={i} onClick={e => changeImage(i)} className={`minimapimg ${imgIndex === i ? 'active' : ''} `} src={src} />)}
         </div>}
     </div>

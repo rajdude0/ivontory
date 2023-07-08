@@ -5,6 +5,7 @@
 }
 
 
+
 .productdetailbox .slider {
     display: flex;
     align-items: center;
@@ -70,8 +71,26 @@
 .productdetailbox .description {
     margin-top: 50px;
     font-size: 16px;
+    line-height: 2;
 }
 
 .productdetailbox .description .title {
     display: block;
+    line-height: normal;
 }
+
+
+
+@media screen and (max-width:  450px) {
+    .productdetailbox {
+     grid-template-columns: auto;
+     padding: 30px 10px;
+    }
+
+    .productdetailbox .detailscontainer {
+        margin-top: 30px;
+        margin-left: 10px;
+    }
+
+ }
+ 

@@ -32,9 +32,15 @@ export const ProductDetailBox = ({ }) => {
     const api = makeAPI();
 
    const sliderProps = useMemo(() => {
+        let width = 500;
+        let height = 700;
+       if(window.innerWidth <= 800) {
+            width=300;
+            height=500;
+       }
         return {
-            height: 700,
-            width: 500,
+            height,
+            width,
             showMiniMap: true
         }
    }, [])
