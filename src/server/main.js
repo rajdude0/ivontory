@@ -87,9 +87,8 @@ app.use((err, req, res, next) => {
   if(err) {
     res.status(res.statusCode || 500).json({error: err});
   }
+  next();
 })
-
-
 
 ViteExpress.listen(app, 3000, () =>
   console.log("Server is listening on port 3000...")

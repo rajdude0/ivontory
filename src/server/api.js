@@ -6,7 +6,6 @@ import path from 'path'
 import { nanoid } from 'nanoid'
 import { groupBy } from "./util.js"
 import { decode } from "html-entities";
-import { title } from "process";
 
 
 
@@ -299,6 +298,75 @@ apiRouter.get("/products", async (req, res, next) => {
 });
 
 
+const getObjectByID = async (object, id) => {
+    try {
+        const { rows } = await db.query(`select * from ${object} where id=$1;`, [id]);
+        return rows[0];
+    } catch (e) {
+        throw e;
+    }
+}
+
+apiRouter.get("/product/:id", async (req, res, next) => {
+    try {
+        const { id } = req.params; 
+        const {size, color, gender } = req.query
+        const hasQuery = size || color || gender;
+        const placeHolderValue = { i : 1};
+        const queryStash = [getWhereClause('size.id', placeHolderValue, size),
+                            getWhereClause('color.id', placeHolderValue, color),
+                            getWhereClause('gender.id', placeHolderValue, gender),
+                        ].filter(item => item);
+    
+    
+        const queryString = queryStash.map(q => q.query).join(" and ");
+        const queryValue = queryStash.map(q => q.value);
+        if(!id) {
+            res.statusCode = 400;
+            throw new Error("Invalid product id!");
+        }
+
+        const { rows } = await db.query(`select 
+                                            product.id as pid,
+                                            product.name as name,
+                                            product.description as desc,
+                                            stock.id as sid,
+                                            brands.id as brand_id,
+                                            size.id as size_id,
+                                            gender.id as gender_id,
+                                            color.id as color_id,
+                                            images.path as images,
+                                            stock.count as count, 
+                                            stock.price as price
+                                            from stock  
+                                            join product on product.id = stock.productid 
+                                            join sizecolor on sizecolor.id = stock.sizecolorid 
+                                            join sizegender on sizegender.id = sizecolor.sizegenderid 
+                                            join color on color.id = sizecolor.colorid 
+                                            join gender on gender.id = sizegender.genderid
+                                            join size on size.id = sizegender.sizeid 
+                                            join category on category.id = product.categoryid 
+                                            join images on images.productid = product.id and images.sizecolorid = sizecolor.id 
+                                            join brands on brands.id = product.brandid
+                                            and product.id = $1 ${hasQuery ? 'where  ' + queryString : ''}
+                                        `, hasQuery ? [id, ...queryValue]: [id]) // TODO: read all stocks for that given productId, include color, size, brand, category joining
+     
+      return res.json(await Promise.all(rows.map(async ({size_id, color_id, gender_id, brand_id, ...remain}) => {
+        return {
+            size: await getObjectByID("size", size_id),
+            color: await getObjectByID("color", color_id),
+            gender: await getObjectByID("gender", gender_id),
+            brand: await getObjectByID("brands", brand_id),
+            ...remain
+        }
+      })));
+    } catch(e) {
+        return mrError(next, res, e.detail)
+    }
+
+});
+
+
 apiRouter.post("/createProduct", [stringValidate('name'), stringValidate('description'),  uuidValidate('brandid'), uuidValidate('categoryid')], async (req, res, next) => {
     mrValidate(next, req, res);
     const { name, description, tagid, brandid, categoryid } = req.body;
@@ -369,6 +437,21 @@ apiRouter.post("/createStock", [uuidValidate('productid'), uuidValidate('sizeid'
     } catch (e) {
         return mrError(next, res, e.detail);
     }
+});
+
+apiRouter.get("/getStock/:id", [uuidValidate('id')],  async(req, res, next) => {
+    const { id } = req.params;
+    if(!id) {
+        res.statusCode = 400;
+        throw new Error("Invalid Stock id!");
+    }
+    try {
+       const { rows } = await db.query("select count, price, productid from stock where id=$1", [id]);
+       return res.json(rows[0]);
+    } catch (e) {
+        return mrError(next, res, e.detail)
+    }
+
 });
 
 

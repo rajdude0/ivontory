@@ -8,10 +8,12 @@ import { Home } from "./Components/Home";
 import { IconInput } from "./Components/Input";
 import { FaSearch, FaBars, FaInstagram } from "react-icons/fa";
 
+import { FiX } from "react-icons/fi"
 import { DataContext, DataContextProvider } from "./Components/DataContext";
 import { NavContext, NavContextProvider } from './Components/NavContext';
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css";
+import { ProductDetailBox } from "./Components/ProductDetail";
 
 function App() {
 
@@ -29,7 +31,7 @@ function App() {
   return (
     <div className="App">
         <ToastContainer position="top-right" autoClose={2000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light" />
-       <ToastContainer />
+ 
       <DataContextProvider>
        
         <Navbar>
@@ -43,6 +45,7 @@ function App() {
         </Navbar>
         <Routes>
           <Route path="/" element={ <Home /> } />
+          <Route path="/product/:pid" element={ <ProductDetailBox />} />
           <Route path="/admin" element={ <Admin />} />
         </Routes>
         </DataContextProvider>

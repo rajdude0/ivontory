@@ -2,6 +2,7 @@ import { useCallback, useState, useRef, useEffect } from "react"
 import "./Product.css";
 import { FaDollarSign, FaRupeeSign } from "react-icons/fa";
 import { Slider } from "./Slider";
+import { useNavigate } from "react-router-dom";
 
 export const ProductBox = ({ children }) => {
     return <div className="productbox">
@@ -10,9 +11,16 @@ export const ProductBox = ({ children }) => {
 }
 
 export const Product = ({ name, images = [], id, price, brand, title}) => {
+
+    const navigate = useNavigate();
+
+    const handleImageClick = useCallback(()=> {
+        navigate(`/product/${id}`);
+    }, [id])
+
    
     return <div className="product-container">
-           <Slider images={images} classNames={["product"]} />
+           <Slider images={images} classNames={["product"]} onClick={handleImageClick} />
            <div className="details">
                 <div className="brand">
                     {brand}
