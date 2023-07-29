@@ -5,12 +5,12 @@ import { useDropzone } from "react-dropzone"
 import { SketchPicker } from "react-color" 
 import { post } from "superagent"
 
-export const IconInput = ({ name, type, placeholder, onChange, size="big", Icon=FaSearch, required}) => {
+export const IconInput = ({ name, type, placeholder, onChange, defalutValue="", size="big", Icon=FaSearch, required}) => {
     return <div tabIndex={0}  className="textinput search">
               <div className="icon">
                 <Icon />
               </div>
-            <input name={name} type={type} placeholder={placeholder} onChange={(e) => onChange(e.target)} required={required}/>
+            <input name={name} type={type} defaultValue={defalutValue} placeholder={placeholder} onChange={(e) => onChange(e.target)} required={required}/>
         </div>
 }
 
@@ -137,7 +137,7 @@ export const DropdownColorItem = ({name, color, value, onClick}) => {
 }
 
 
-export const Dropdown = ({ placeholder="New", name, options = [], onChange, defalutValue="", DropdownItemRender=DropdownItem, addMore=false, hasAddMoreMeta=false, morePlaceholder="",  metaPlaceholder="", AddMoreRenderer=AddMoreTextItem, onAddMore }) => {
+export const Dropdown = ({ placeholder="New", name, options = [], onChange, defalutValue, DropdownItemRender=DropdownItem, addMore=false, hasAddMoreMeta=false, morePlaceholder="",  metaPlaceholder="", AddMoreRenderer=AddMoreTextItem, onAddMore }) => {
 
     const [ state, setState ] = useState({name: defalutValue || `Choose ${name}`, value: -1});
     const [ toggle, setToggle ] = useState(false);
@@ -171,14 +171,14 @@ export const Dropdown = ({ placeholder="New", name, options = [], onChange, defa
 
 }
 
-export const Textarea = ({ name, placeholder, onChange}) => {
-    return <textarea name={name} onChange={({target}) => onChange(target)} placeholder={placeholder} className="textarea">
+export const Textarea = ({ name, placeholder, defalutValue,  onChange}) => {
+    return <textarea defaultValue={defalutValue} name={name} onChange={({target}) => onChange(target)} placeholder={placeholder} className="textarea">
 
     </textarea>
 }
 
 
-export const ImageDrop = ({ name, onChange = () => {}, onUpload, reset}) => {
+export const ImageDrop = ({ name, defaultImageFiles=[], onChange = () => {}, onUpload, reset}) => {
     const [files, setFiles]  = useState([]);
     const [ showUpload, setShowUpload ] = useState(true);
 

@@ -47,6 +47,7 @@ function App() {
           <Route path="/" element={ <Home /> } />
           <Route path="/product/:pid" element={ <ProductDetailBox />} />
           <Route path="/admin" element={ <Admin />} />
+          <Route path="/admin/:pid" element={ <Admin />} />
         </Routes>
         </DataContextProvider>
     </div>

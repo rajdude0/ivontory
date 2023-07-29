@@ -12,15 +12,15 @@ export const ProductDetailBox = ({ }) => {
     const [activeIndex, setActiveIndex] = useState(0);
     
     const sizes = useMemo(() => {
-         return products.map(({size}) => ({...size, name: size.short, actual_name: size.name }));
+         return products.map(({size}) => ({...size, value: size.id, name: size.short, actual_name: size.name }));
     }, [products]);
 
     const genders = useMemo(() => {
-        return products.map(({gender}) => ({...gender, name: gender.short, actual_name: gender.name}));
+        return products.map(({gender}) => ({...gender, value: gender.id, name: gender.short, actual_name: gender.name}));
     }, [products]);
 
    const colors = useMemo(() => {
-    return products.map(({color}) => ({ ...color, color: color.name}));
+    return products.map(({color}) => ({ ...color, value: color.id, color: color.name}));
    }, [products]);
 
 
@@ -68,11 +68,11 @@ export const ProductDetailBox = ({ }) => {
                 <div className="price"><FaRupeeSign/>{products[activeIndex].price}</div>
                 <div className="sizes">
                     <span className="title">Sizes</span>
-                    <OptionBox name="size" type="text" options={sizes} onChange={handleSizeChange} OptionRenderer={OptionItem} />
+                    <OptionBox name="size" defaultSelected={sizes[activeIndex].value} type="text" options={sizes} onChange={handleSizeChange} OptionRenderer={OptionItem} />
                 </div>
                 <div className="colors">
                     <span className="title">Colors</span>
-                    <OptionBox name="color" type="color" onChange={handleSizeChange} options={colors} OptionRenderer={OptionItem} />
+                    <OptionBox name="color" defaultSelected={colors[activeIndex].value} type="color" onChange={handleSizeChange} options={colors} OptionRenderer={OptionItem} />
                 </div>
                 
                 

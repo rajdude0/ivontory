@@ -310,12 +310,13 @@ const getObjectByID = async (object, id) => {
 apiRouter.get("/product/:id", async (req, res, next) => {
     try {
         const { id } = req.params; 
-        const {size, color, gender } = req.query
-        const hasQuery = size || color || gender;
+        const {size, color, gender, szcid } = req.query
+        const hasQuery = size || color || gender || szcid;
         const placeHolderValue = { i : 1};
         const queryStash = [getWhereClause('size.id', placeHolderValue, size),
                             getWhereClause('color.id', placeHolderValue, color),
                             getWhereClause('gender.id', placeHolderValue, gender),
+                            getWhereClause('stock.sizecolorid', placeHolderValue, szcid),
                         ].filter(item => item);
     
     
@@ -328,6 +329,7 @@ apiRouter.get("/product/:id", async (req, res, next) => {
 
         const { rows } = await db.query(`select 
                                             product.id as pid,
+                                            stock.sizecolorid as szcid,
                                             product.name as name,
                                             product.description as desc,
                                             stock.id as sid,
@@ -439,7 +441,7 @@ apiRouter.post("/createStock", [uuidValidate('productid'), uuidValidate('sizeid'
     }
 });
 
-apiRouter.get("/getStock/:id", [uuidValidate('id')],  async(req, res, next) => {
+apiRouter.get("/stock/:id", [uuidValidate('id')],  async(req, res, next) => {
     const { id } = req.params;
     if(!id) {
         res.statusCode = 400;

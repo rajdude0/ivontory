@@ -9,6 +9,7 @@ import { makeAPI } from "../lib/API"
 import { toast  } from "react-toastify";
 import { NavContext } from "./NavContext"
 import { isDefined } from "../../server/utils"
+import { useParams, useSearchParams } from "react-router-dom";
 
 export const Admin = () => {
     const [size, setSize] = useState([]);
@@ -17,9 +18,17 @@ export const Admin = () => {
     const [brands, setBrands] = useState([]);
     const [category, setCategory] = useState([]);
 
+    const [product, setProduct] = useState([]);
+
+    const [defaultImageFiles, setDefaultImageFiles] = useState([]);
+
     const [bump, forceBump ] = useState({});
 
     const { setNavState, useNavState } = useContext(NavContext);
+
+    const { pid } = useParams();
+    const [searchParmas] = useSearchParams();
+    const szcid = searchParmas.get("szcid");
 
     useEffect(()=> {
             setNavState(prev => ({
@@ -81,14 +90,23 @@ export const Admin = () => {
             (async () => {
                const res = await api('/api/inventoryMeta').get()
                if(res) {
-               setSize(res.size.map(({ id , name, short, size, unit}) => ({ key: id,  value: id, name})))
-               setColor(res.color.map(({id, name, code}) => ({ key: id, name, value: id, color: code})))
-               setGender(res.gender.map(({id, name, short}) => ({ key: id, value: id, name, short})))
-               setBrands(res.brands.map(({id, name, origin}) => ({ key: id, value: id, name, origin})))
-               setCategory(res.category.map(({id, name}) => ({ key: id, value: id, name})))
+                setSize(res.size.map(({ id , name, short, size, unit}) => ({ key: id,  value: id, name})))
+                setColor(res.color.map(({id, name, code}) => ({ key: id, name, value: id, color: code})))
+                setGender(res.gender.map(({id, name, short}) => ({ key: id, value: id, name, short})))
+                setBrands(res.brands.map(({id, name, origin}) => ({ key: id, value: id, name, origin})))
+                setCategory(res.category.map(({id, name}) => ({ key: id, value: id, name})))
                }
             })()
     }, [])
+
+    useEffect(() => {
+            (async () => {
+                if(pid && szcid) {
+                    const res = await api(`/api/product/${pid}?szcid=${szcid}`).get();
+                    setProduct(res[0]);
+                }
+            })()
+    }, [pid, szcid])
 
 
     const handleChange = (e) => {
