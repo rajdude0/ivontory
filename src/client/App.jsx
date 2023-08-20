@@ -38,7 +38,7 @@ function App() {
         <AuthContextProvider>
         <Navbar>
            <NavLogo title={"Ivontory"} />
-           <IconInput className="navsearch" Icon={FaSearch}  placeholder={"Search.."}/>
+           { navState.isSearchOn && <IconInput className="navsearch" Icon={FaSearch}  placeholder={"Search.."}/> }
           { navState.isFilterOn && <div onClick={handleFilterOpen} className={`filter mobile ${navState.filterOpen? 'active': ''} `}>
              { navState.filterOpen ? <FiX /> : <FaBars /> }
            </div>

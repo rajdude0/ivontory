@@ -1,14 +1,14 @@
 import { createContext, useMemo, useState } from "react";
 
 export const NavContext = createContext({
-    navState: {},
+    navState: { },
     setNavState: () => {}
 })
 
 
 export const NavContextProvider = ({ children =[]}) => {
 
-    const [navState, setNavState] = useState({});
+    const [navState, setNavState] = useState({  isSearchOn: true });
 
     const api = useMemo(()=> {
             return {

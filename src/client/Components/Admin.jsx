@@ -42,8 +42,8 @@ export const Admin = () => {
     const emptyState = {
         product: null,
         description: null,
-        category: [],
-        brands: [],
+        category: null,
+        brands: null,
         gender: null,   
         color: null,
         size: null,
