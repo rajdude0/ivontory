@@ -441,3 +441,15 @@
 .button.secondary:active {
      box-shadow:  rgba(50, 50, 93, 0.25) 0px -25px 28px -15px inset, rgba(0, 0, 0, 0.3) 0px 18px 0px -19px inset 
 }
+
+.droppad.active {
+    box-shadow: inset 2px 2px 3px 0 #ccc;
+}
+
+.draggable {
+    cursor: grab;
+}
+
+.draggable:hover {
+    box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+}

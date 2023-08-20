@@ -8,7 +8,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 create table permissions (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name text not null,
+    name text not null
 );
 
 
@@ -17,6 +17,7 @@ create table users (
     username text not null unique,
     email text not null unique,
     password text not null,
+    salt text not null,
     phoneno text, 
     permissionid uuid REFERENCES permissions(id)
 );
@@ -103,7 +104,11 @@ create table stock (
 
 --- seed data
 
-insert into permissions(name) values ('admin', 'user', 'guest', 'moderator');
+insert into permissions(name) values ('admin');
+insert into permissions(name) values ('user');
+insert into permissions(name) values ('guest');
+insert into permissions(name) values ('moderator');
+insert into users(username, email, password, salt, phoneno, permissionid) values('admin', 'admin@multiverinventory.com', 'a402ab7f9309c77bbf1f2ee99746aa39' , '+100000000', (select id from permissions where name='admin'));
 insert into brands (name, origin) values ('Nike', 'USA'), ('Reebok', 'USA'), ('Puma', 'USA');
 insert into category (name) values ('Shirt'), ('Pants'), ('Perfumes');
 insert into gender (name, short) values ('Male', 'M'), ('Female', 'F'), ('Unisex', 'U');

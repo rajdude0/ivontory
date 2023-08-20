@@ -4,10 +4,8 @@ import { arrayValidate, numberValidate, objectValidate, stringValidate, uuidVali
 import { db } from "./db.js";
 import path from 'path'
 import { nanoid } from 'nanoid'
-import { groupBy } from "./util.js"
+import { groupBy, md5 } from "./util.js"
 import { decode } from "html-entities";
-
-
 
 
 export const apiRouter = Router();
@@ -46,6 +44,8 @@ const getWhereClause = (key, placeholder = { }, value, multi=false,) => {
      }
 }
 
+const getUpdateQuery = (key, bindNumber) => `${key}=$${bindNumber}`;
+
 apiRouter.get("/inventory", async(req, res) => {
     const {size, color, gender, brands, category} = req.query
     const hasQuery = size || color || gender || brands || category;
@@ -61,7 +61,7 @@ apiRouter.get("/inventory", async(req, res) => {
     const queryString = queryStash.map(q => q.query).join(" and ");
     const queryValue = queryStash.map(q => q.value);
 
-    const { rows } = await db.query(`select product.id as pid,  stock.id as sid, product.name as name , size.name as size, color.name as color, images.path as images , brands.name as brand, count, price from stock 
+    const { rows } = await db.query(`select distinct(stock.productid) as pid, product.name as name , images.path as images , brands.name as brand, count, price from stock 
                                     join product on product.id = stock.productid 
                                     join sizecolor on sizecolor.id = stock.sizecolorid 
                                     join sizegender on sizegender.id = sizecolor.sizegenderid 
@@ -71,7 +71,6 @@ apiRouter.get("/inventory", async(req, res) => {
                                     join category on category.id = product.categoryid 
                                     join images on images.productid = product.id and images.sizecolorid = sizecolor.id 
                                     join brands on brands.id = product.brandid ${hasQuery ? 'where  ' + queryString : ''}`, queryValue)
-   
     return res.json(rows);
 
 })
@@ -337,6 +336,7 @@ apiRouter.get("/product/:id", async (req, res, next) => {
                                             size.id as size_id,
                                             gender.id as gender_id,
                                             color.id as color_id,
+                                            category.id as category_id,
                                             images.path as images,
                                             stock.count as count, 
                                             stock.price as price
@@ -351,14 +351,15 @@ apiRouter.get("/product/:id", async (req, res, next) => {
                                             join images on images.productid = product.id and images.sizecolorid = sizecolor.id 
                                             join brands on brands.id = product.brandid
                                             and product.id = $1 ${hasQuery ? 'where  ' + queryString : ''}
-                                        `, hasQuery ? [id, ...queryValue]: [id]) // TODO: read all stocks for that given productId, include color, size, brand, category joining
+                                        `, hasQuery ? [id, ...queryValue]: [id]);
      
-      return res.json(await Promise.all(rows.map(async ({size_id, color_id, gender_id, brand_id, ...remain}) => {
+      return res.json(await Promise.all(rows.map(async ({size_id, color_id, gender_id, brand_id, category_id, ...remain}) => {
         return {
             size: await getObjectByID("size", size_id),
             color: await getObjectByID("color", color_id),
             gender: await getObjectByID("gender", gender_id),
-            brand: await getObjectByID("brands", brand_id),
+            brands: await getObjectByID("brands", brand_id),
+            category: await getObjectByID("category", category_id),
             ...remain
         }
       })));
@@ -457,16 +458,76 @@ apiRouter.get("/stock/:id", [uuidValidate('id')],  async(req, res, next) => {
 });
 
 
-apiRouter.put("/updateStock", [uuidValidate('stockid'), numberValidate('count'), numberValidate('price')], async (req, res, next) => {
+apiRouter.put("/updateStock", [uuidValidate('productid'), objectValidate('size'), objectValidate('gender'), objectValidate('brands'),objectValidate('color'), objectValidate('category'), numberValidate('count'), numberValidate('price')], async (req, res, next) => {
     mrValidate(next, req, res);
-    const { stockid, count, price } = req.body;
+    const { productid, stockid, count, price, brands, image, category, size, gender, color, } = req.body;
+    const { value: sizeid } = size;
+    const { value: colorid } = color;
+    const { value: genderid } = gender;
+    const { value: brandsid } = brands;
+    const { value: categoryid } = category;
+
     try {
-      const { rows } = await db.query("update stock set count=$1, price=$2 where id=$3", [count, price, stockid]);
+      
+      {
+        let bindNumber = 0;
+        const updateColumns = [];
+        updateColumns.push(brandsid && getUpdateQuery('brandid', ++bindNumber));
+        updateColumns.push(categoryid && getUpdateQuery('categoryid', ++bindNumber));
+        const updateQueries = `set ` + updateColumns.filter(i => i).join(", ");
+        const { rows: productUpdate } = await db.query(`update product ${updateQueries} where id=$${++bindNumber}`, [brandsid, categoryid, productid])
+      }
+
+      let { rows:sizegender } = await db.query(`select id from sizegender where sizeid=$1 and genderid=$2`, [sizeid, genderid]);
+      if(!sizegender.length) {
+        const { rows } = await db.query(`insert into sizegender (sizeid, genderid) values ($1, $2) returning id`, [sizeid, genderid]);
+        sizegender = rows;
+      }
+      sizegender = sizegender.map(({id}) => id);
+      let { rows: sizecolor } = await db.query(`select id from sizecolor where sizegenderid=$1 and colorid=$2`, [sizegender[0], colorid]);
+      if(!sizecolor.length) {
+        const { rows } = await db.query(`insert into sizecolor (sizegenderid, colorid) values ($1, $2) returning id`, [sizegender[0], colorid]);
+        sizecolor = rows;
+      }
+
+      sizecolor = sizecolor.map(({id}) => id);
+
+      {
+        const { rows } = await db.query(`select id from images where sizecolorid=$1`,[sizecolor[0]]);
+        if(!rows.length) {
+            const imagesPath = '{' + image.join(",") + '}';
+           const { rows:imageid } = await db.query(`insert into images (path, productid, sizecolorid) values ($1, $2, $3) returning id`, [imagesPath, productid, sizecolor[0]]);
+        }
+      }
+
+
+      let bindNumber = 0;
+      const updateColumns = [];
+      updateColumns.push(count && getUpdateQuery('count', ++bindNumber));
+      updateColumns.push(price && getUpdateQuery('price', ++bindNumber));
+      updateColumns.push(sizecolor[0] && getUpdateQuery('sizecolorid', ++bindNumber));
+      const updateQueries = `set ` + updateColumns.filter(i => i).join(', ');
+      const { rows } = await db.query(`update stock ${updateQueries} where id=$${++bindNumber}`, [count, price, sizecolor[0], stockid]);
       return res.json(rows);
+
     } catch(e) {
         return mrError(next, res, e.detail);
     }
+});
+
+apiRouter.put("/updateImagesOrder", [uuidValidate("pid"), uuidValidate("szid"), arrayValidate('images')], async (req, res, next) => {
+    mrValidate(next, req, res);
+    try {
+        let { images, pid, szid } = req.body;
+        if(!Array.isArray(images)) return res.status(400).json({error: "bad request"});
+        images = `{${images.join(',')}}`
+        const { rows } = await db.query("update images set path=$1 where productid=$2", [images, pid]);
+        return res.json(rows);
+      } catch(e) {
+          return mrError(next, res, e.detail);
+      }
 })
+
 
 apiRouter.put("/updateProduct", [stringValidate('name'), stringValidate('description'), uuidValidate('tagid'), uuidValidate('brandid'), uuidValidate('categoryid')], async (req, res, next) => {
     mrValidate(next, req, res);
@@ -479,6 +540,88 @@ apiRouter.put("/updateProduct", [stringValidate('name'), stringValidate('descrip
     }
 
 });
+
+
+const createSession = (id, permission, req, res, next) => {
+    const { redirect } = req.query;
+    req.session.regenerate((err) => {
+        if(err) next(err);
+        if(permission === "admin") {
+            const now = new Date()
+            const expiresAt = new Date(+now + 120 * 1000)
+            res.cookie("isAdmin", true, {expires: expiresAt, httpOnly: true })
+        }
+        req.session.user = { id, permission }; 
+        req.session.save((err)=> {
+            if(err) return next(err);
+            return res.redirect(redirect ? redirect : "/");
+        })
+    })
+}
+
+export const isValidSession = (req, res, next) => {
+    if(req.session?.user?.id) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+export const isAdminSesion = (req, res, next) => {
+    let { redirect } = req.query;
+     redirect = redirect || "/admin"
+    if(req.session?.user?.permission === "admin") {
+        next();
+    } else {
+        res.status(403);
+       return res.redirect(`/login?redirect=${redirect ? redirect : '/' }`);
+    }
+}
+
+apiRouter.post("/login", [stringValidate('username'), stringValidate('password')], async (req, res, next) => {
+    const { username, password } = req.body;
+    const { redirect } = req.query;
+    try {
+            if(username && password) {
+            const { rows } = await db.query("select id, password, permissionid from users where username=$1", [username]);
+            if(rows.length < 1) {
+                return res.status(401).json({ error: "invalid credentials"});
+            }
+            const {id, password: passwordHash, permissionid } = rows[0];
+            const md5Hash = md5(password);
+            if(md5Hash === passwordHash) {
+                const {rows} = await db.query("select name from permissions where id=$1", [permissionid]);
+                return createSession(id, rows[0].name, req, res, next);
+            } else {
+                return res.status(401).json({ error: "invalid credentials"})
+            }
+        } else {
+            if(isValidSession(req)){
+             const sessionUser = req.session.user;
+              return req.session.regenerate((err)=> {  
+                err && next(err);
+                req.session.user = sessionUser;
+                req.session.save(err => err && next(err));  
+                return res.redirect(redirect ? redirect : "/");
+              });
+              
+            }
+        }
+        return mrValidate(next, req, res);
+    } catch (e) {
+        return mrError(next, res, e.detail);
+    }
+});
+
+apiRouter.get("/permissions", (req, res, next) => {
+    if(req.session?.user) {
+        return res.json({permissions: req.session.user.permission});
+    } else {
+        return res.json({permissions: "guest"});
+    }
+
+})
+
 
 
 

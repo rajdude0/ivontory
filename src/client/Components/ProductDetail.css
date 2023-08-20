@@ -25,6 +25,7 @@
     justify-content: flex-start;
     flex-direction: column;
     gap: 5px;
+    position: relative;
 }
 
 .productdetailbox .brand {
@@ -77,6 +78,34 @@
 .productdetailbox .description .title {
     display: block;
     line-height: normal;
+}
+
+.productdetailbox .detailscontainer .optionsbox {
+    display: flex;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    align-items: center;
+}
+
+.productdetailbox .detailscontainer .optionsbox .options {
+    margin: 0px;
+    padding: 0px;
+    position: absolute;
+    top: 35px;
+    left: -2.5px;
+    padding: 5px;
+    background-color: #fff;
+}
+
+.productdetailbox .detailscontainer .optionsbox button .icon {
+    margin: 0;
+}
+.optionsbox .options li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-bottom: 0.5px solid #ccc;
 }
 
 
