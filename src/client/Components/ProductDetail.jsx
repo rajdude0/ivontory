@@ -16,7 +16,7 @@ const Options = ({ isAdmin, productid, szcid }) => {
         setToggle(prev => !prev);
     }
 
-    return <div className="optionsbox">
+    return isAdmin && <div className="optionsbox">
             <Button Icon={FaEllipsisV} size="small" onClick={toggleState} />
             { toggle && <ul className="options">
                  {isAdmin && <li><Link to={`/admin/${productid}?szcid=${szcid}`}>Edit</Link></li>}
