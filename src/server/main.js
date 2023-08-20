@@ -4,7 +4,7 @@ const result = dotenv.config({ path: path.join(path.resolve(), ".env" )});
 import express  from "express";
 import ViteExpress from  "vite-express";
 import bodyParser from "body-parser";
-import {apiRouter} from "./api.js";
+import {apiRouter, isAdminSesion} from "./api.js";
 import fileupload from "express-fileupload"
 import passport  from 'passport';
 import session from 'express-session';
@@ -24,29 +24,15 @@ Object.entries(result).map(([k ,v])=> process.env[k]=v);
 
 const app = express();
 
-const basicAuth = passport.authenticate('basic', {
-    session         : false,
-    successRedirect : '/admin',
-    failureRedirect : '/'
-  })
-
-  const users = {
+const users = {
     "rajesh": "rajesh123",
     "admin": "rahul1994"
-  }
-
-passport.use(new BasicStrategy(function(username, password, done) {
-    if (!users[username] || users[username] != password) {
-        return done (null, false);
-    }
-    return done(null, {username: username});
-}));
+}
 
 
 app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser())
 
 app.use(session({
   secret:'ivontory-adlafijakd',
@@ -77,9 +63,7 @@ app.use(fileupload(
 
 app.use("/api", apiRouter);
 
-app.use("/admin", passport.authenticate('basic', {
-  session: false
-}), (req, res, next) => {
+app.use("/admin", isAdminSesion, (req, res, next) => {
     next();
 })
 

@@ -5,12 +5,12 @@ import { useDropzone } from "react-dropzone"
 import { SketchPicker } from "react-color" 
 import { post } from "superagent"
 
-export const IconInput = ({ name, type, placeholder, onChange, size="big", Icon=FaSearch, required}) => {
+export const IconInput = ({ name, type, placeholder, value,  onChange, defalutValue="", size="big", Icon=FaSearch, required}) => {
     return <div tabIndex={0}  className="textinput search">
               <div className="icon">
                 <Icon />
               </div>
-            <input name={name} type={type} placeholder={placeholder} onChange={(e) => onChange(e.target)} required={required}/>
+            <input name={name} type={type} defaultValue={defalutValue} value={value} placeholder={placeholder} onChange={(e) => onChange(e.target)} required={required}/>
         </div>
 }
 
@@ -136,8 +136,7 @@ export const DropdownColorItem = ({name, color, value, onClick}) => {
         </div>
 }
 
-
-export const Dropdown = ({ placeholder="New", name, options = [], onChange, defalutValue="", DropdownItemRender=DropdownItem, addMore=false, hasAddMoreMeta=false, morePlaceholder="",  metaPlaceholder="", AddMoreRenderer=AddMoreTextItem, onAddMore }) => {
+export const Dropdown = ({ placeholder="New", name, options = [], onChange, selectedValue, defalutValue, DropdownItemRender=DropdownItem, addMore=false, hasAddMoreMeta=false, morePlaceholder="",  metaPlaceholder="", AddMoreRenderer=AddMoreTextItem, onAddMore }) => {
 
     const [ state, setState ] = useState({name: defalutValue || `Choose ${name}`, value: -1});
     const [ toggle, setToggle ] = useState(false);
@@ -148,8 +147,14 @@ export const Dropdown = ({ placeholder="New", name, options = [], onChange, defa
         });
     }
 
+
+    useEffect(() => {
+        if(selectedValue) {
+         setState(selectedValue);
+        }
+    }, [selectedValue])
+
     const updateState = (value) => {
-        setState(value);
         dropdownToggle();
         onChange({name, value})
     }
@@ -171,20 +176,72 @@ export const Dropdown = ({ placeholder="New", name, options = [], onChange, defa
 
 }
 
-export const Textarea = ({ name, placeholder, onChange}) => {
-    return <textarea name={name} onChange={({target}) => onChange(target)} placeholder={placeholder} className="textarea">
+export const Textarea = ({ name, placeholder, defalutValue, value,  onChange}) => {
+    return <textarea defaultValue={defalutValue} value={value} name={name} onChange={({target}) => onChange(target)} placeholder={placeholder} className="textarea">
 
     </textarea>
 }
 
 
-export const ImageDrop = ({ name, onChange = () => {}, onUpload, reset}) => {
+export const Draggable = ({ children =[] , compProps = {}, dragData="" }) => {
+
+    const onDragHandler = useCallback((e) => {
+        e.dataTransfer.setData('drag-data', JSON.stringify({compProps, dragData}));
+    }, []);
+
+    return <div className="draggable" onDragStart={onDragHandler}>
+           { children }
+    </div>
+}
+
+export const Dropable = ({children = [], onDrop= () => {}}) => {
+
+    const [isActive, setIsActive] = useState(false);
+
+    const onDropHandler = useCallback((e) => {
+            e.preventDefault();
+            const data = e.dataTransfer.getData('drag-data');
+            onDrop(JSON.parse(data));
+            setIsActive(false);
+    }, []);
+
+    const onDragOverHandlerEnter = useCallback((e) => {
+            e.preventDefault();
+            setIsActive(true);
+    }, [])
+
+    const onDragOverHandlerLeave = useCallback((e) => {
+        e.preventDefault();
+        setIsActive(false);
+}, [])
+
+    return <div className={`droppad ${isActive ? 'active': ''}`} onDragOver={onDragOverHandlerEnter} onDragEnter={onDragOverHandlerEnter} onDragLeave={onDragOverHandlerLeave} onDrop={onDropHandler}>
+        { children }
+    </div>
+} 
+
+export const ImageDrop = ({ name, defaultImageFiles=[], onImagesOrderChanged = () => {},  onChange = () => {}, onUpload, reset}) => {
     const [files, setFiles]  = useState([]);
     const [ showUpload, setShowUpload ] = useState(true);
+    const [hasImagesOrderChanged, setHasImagesOrderChanged] = useState(false);
 
     useEffect(() => {
         setFiles([])
     }, [reset])
+
+    useEffect(() => {
+        (async () => {
+            const IMAGES = await Promise.all(defaultImageFiles.map(async (image) => {
+                const blob  = await fetch(location.origin + "/" + image).then(data => data.blob());
+                const file = new File([blob], image);
+                return { file, uploaded: true, allowReorder: true, preview: URL.createObjectURL(file)}
+            }))
+            setFiles(prev => {
+                return [ ...IMAGES];
+             })
+        })() 
+         
+    }, [defaultImageFiles])
 
     useEffect(() => {
             const FILES = files.map(file => new File([file], file.name));
@@ -192,13 +249,29 @@ export const ImageDrop = ({ name, onChange = () => {}, onUpload, reset}) => {
     }, [files])
 
     const handleUpload = () => {
+        if(hasImagesOrderChanged) {
+            onImagesOrderChanged(files);
+            setHasImagesOrderChanged(false);
+        }
         const req = post('/api/upload');
-        files.filter(file => !file.uploaded).forEach(({file}) => req.attach(file.name, file))
-        req.then(({body}) => {
-         setFiles(prev => prev.map(file => ({...file, uploaded: true})))
-         setShowUpload(false);
-         onUpload({name, value: body.files});
-       })
+        const filesToBeUploaded = files.filter(file => !file.uploaded)
+        if(filesToBeUploaded.length > 0) {
+            filesToBeUploaded.forEach(({file}) => req.attach(file.name, file))
+                    req.then(({body}) => {
+                        if(defaultImageFiles.length == 0) {
+                            setFiles(prev => {
+                                return [
+                                    ...prev,
+                                    ...filesToBeUploaded.map(file => ({ ...file, uploaded: true }))
+                                ]
+                            })
+                      }
+                        setShowUpload(false);
+                        onUpload({name, value: body.files});
+                })
+        } else {
+            setShowUpload(false);
+        }
     }
 
     const { getRootProps, getInputProps, isDragAccept, isFocused, isDragReject,} = useDropzone({
@@ -214,27 +287,47 @@ export const ImageDrop = ({ name, onChange = () => {}, onUpload, reset}) => {
 
     const removeFile = (name) => {
             setFiles(prev => {
+                setHasImagesOrderChanged(true)
+                setShowUpload(true);
                 return prev.filter(({file}) => file.name!=name)
             })
     }
+
+    const handlerImageReOrder = useCallback((dropData, i) => {
+        console.log(dropData, i);
+        const { name, index } = dropData.dragData;
+        setFiles(prev => {
+            const localPrev = [...prev];
+            if(index + 1 > localPrev.length) return;
+            const droppedItem = localPrev.splice(index, 1);
+            localPrev.splice(i, 0, droppedItem[0])
+            return localPrev;
+        });
+        setHasImagesOrderChanged(true);
+        setShowUpload(true);
+    }, []);
 
     useEffect(() => {
         // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
         return () => files.forEach(file => URL.revokeObjectURL(file.preview));
       }, []);
 
-      const thumbs = useMemo(() => files.map(({file, uploaded, preview}, i) => (
-        <div className="name" key={file.name+ i}>
-        { showUpload && !uploaded && <div className="remove" onClick={() => removeFile(file.name)}>
-           <FaMinusCircle/>
-        </div> }
-        <div className="inner">
-            <img
-            src={preview}        
-            />
-        
-        </div>
-        </div>
+      const thumbs = useMemo(() => files.map(({file, uploaded, allowReorder, preview}, i) => (
+       
+            <div className="name" key={file.name+ i}>
+                 <Dropable onDrop={(dragData) => handlerImageReOrder(dragData, i)}>
+                    <>
+                        { showUpload && (!uploaded || allowReorder )&& <div className="remove" onClick={() => removeFile(file.name)}>
+                        <FaMinusCircle/>
+                        </div> }
+                        <div className="inner">
+                            <Draggable  dragData={{name: file.name, index: i}} > <img src={preview} /> </Draggable>
+                        
+                        </div>
+                    </>
+                </Dropable>
+            </div>
+      
       )), [files]);
 
 

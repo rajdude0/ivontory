@@ -1,3 +1,6 @@
+
+import crypto from "crypto";
+
 export const groupBy = (key, array = [], merge=true) => {
     return array.reduce((acc, curr, i) => {
             const keyValue = curr[key];
@@ -14,3 +17,5 @@ export const groupBy = (key, array = [], merge=true) => {
             return acc;
     }, {})
 }
+
+export const md5 = (data) => crypto.createHash("md5").update(data, 'utf-8').digest('hex');

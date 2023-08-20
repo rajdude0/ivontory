@@ -14,6 +14,8 @@ import { NavContext, NavContextProvider } from './Components/NavContext';
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css";
 import { ProductDetailBox } from "./Components/ProductDetail";
+import { LoginBox } from "./Components/Login";
+import { AuthContextProvider } from "./Components/AuthContext";
 
 function App() {
 
@@ -33,7 +35,7 @@ function App() {
         <ToastContainer position="top-right" autoClose={2000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light" />
  
       <DataContextProvider>
-       
+        <AuthContextProvider>
         <Navbar>
            <NavLogo title={"Ivontory"} />
            <IconInput className="navsearch" Icon={FaSearch}  placeholder={"Search.."}/>
@@ -45,9 +47,12 @@ function App() {
         </Navbar>
         <Routes>
           <Route path="/" element={ <Home /> } />
+          <Route path="/login" element={ <LoginBox />} />
           <Route path="/product/:pid" element={ <ProductDetailBox />} />
           <Route path="/admin" element={ <Admin />} />
+          <Route path="/admin/:pid" element={ <Admin />} />
         </Routes>
+        </AuthContextProvider>
         </DataContextProvider>
     </div>
   );

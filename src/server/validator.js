@@ -8,4 +8,4 @@ export const numberValidate = (key) => check(key, "Should be a valid number").tr
 
 export const objectValidate = (key) => check(key, "Should be a vaild object").isObject().notEmpty();
 
-export const arrayValidate = (key) => check(key, "Should be a vaild object").isArray().notEmpty();
+export const arrayValidate = (key) => check(key, "Should be a vaild array").isArray().notEmpty();

@@ -4,6 +4,23 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 
+-- permissions can be "admin, user, guest, moderator,"
+
+create table permissions (
+    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name text not null,
+);
+
+
+create table users (
+    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    username text not null unique,
+    email text not null unique,
+    password text not null,
+    phoneno text, 
+    permissionid uuid REFERENCES permissions(id)
+);
+
 create table tags (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     name text not null unique,
@@ -86,7 +103,7 @@ create table stock (
 
 --- seed data
 
-
+insert into permissions(name) values ('admin', 'user', 'guest', 'moderator');
 insert into brands (name, origin) values ('Nike', 'USA'), ('Reebok', 'USA'), ('Puma', 'USA');
 insert into category (name) values ('Shirt'), ('Pants'), ('Perfumes');
 insert into gender (name, short) values ('Male', 'M'), ('Female', 'F'), ('Unisex', 'U');
