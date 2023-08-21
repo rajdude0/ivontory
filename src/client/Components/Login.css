@@ -11,3 +11,9 @@
 .loginbox .textinput {
     width: 30vw;
 }
+
+@media screen and (max-width:  860px) {
+    .loginbox .textinput {
+         width: 90vw;
+    }
+}
