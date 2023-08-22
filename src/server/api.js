@@ -44,7 +44,7 @@ const getWhereClause = (key, placeholder = { }, value, multi=false,) => {
      }
 }
 
-const getUpdateQuery = (key, bindNumber) => `${key}=$${bindNumber}`;
+const getUpdateQuery = (key, bindNumber, value) =>  ({ query: `${key}=$${bindNumber}`, value });
 
 apiRouter.get("/inventory", async(req, res) => {
     const {size, color, gender, brands, category} = req.query
@@ -460,7 +460,7 @@ apiRouter.get("/stock/:id", [uuidValidate('id')],  async(req, res, next) => {
 
 apiRouter.put("/updateStock", [uuidValidate('productid'), objectValidate('size'), objectValidate('gender'), objectValidate('brands'),objectValidate('color'), objectValidate('category'), numberValidate('count'), numberValidate('price')], async (req, res, next) => {
     mrValidate(next, req, res);
-    const { productid, stockid, count, price, brands, image, category, size, gender, color, } = req.body;
+    const { productid, stockid, count, price, brands, image, category, product, description, size, gender, color, } = req.body;
     const { value: sizeid } = size;
     const { value: colorid } = color;
     const { value: genderid } = gender;
@@ -472,10 +472,14 @@ apiRouter.put("/updateStock", [uuidValidate('productid'), objectValidate('size')
       {
         let bindNumber = 0;
         const updateColumns = [];
-        updateColumns.push(brandsid && getUpdateQuery('brandid', ++bindNumber));
-        updateColumns.push(categoryid && getUpdateQuery('categoryid', ++bindNumber));
-        const updateQueries = `set ` + updateColumns.filter(i => i).join(", ");
-        const { rows: productUpdate } = await db.query(`update product ${updateQueries} where id=$${++bindNumber}`, [brandsid, categoryid, productid])
+        updateColumns.push(brandsid && getUpdateQuery('brandid', ++bindNumber, brandsid));
+        updateColumns.push(categoryid && getUpdateQuery('categoryid', ++bindNumber, categoryid));
+        updateColumns.push(product && getUpdateQuery('name', ++bindNumber, product));
+        updateColumns.push(description && getUpdateQuery('description', ++bindNumber, description));
+        const updateQueries = `set ` + updateColumns.filter(i => i).map(({query}) => query).join(", ");
+        const updateValues = updateColumns.filter(i => i).map(({value}) => value);
+
+        const { rows: productUpdate } = await db.query(`update product ${updateQueries} where id=$${++bindNumber}`, [...updateValues, productid])
       }
 
       let { rows:sizegender } = await db.query(`select id from sizegender where sizeid=$1 and genderid=$2`, [sizeid, genderid]);
@@ -503,11 +507,13 @@ apiRouter.put("/updateStock", [uuidValidate('productid'), objectValidate('size')
 
       let bindNumber = 0;
       const updateColumns = [];
-      updateColumns.push(count && getUpdateQuery('count', ++bindNumber));
-      updateColumns.push(price && getUpdateQuery('price', ++bindNumber));
-      updateColumns.push(sizecolor[0] && getUpdateQuery('sizecolorid', ++bindNumber));
-      const updateQueries = `set ` + updateColumns.filter(i => i).join(', ');
-      const { rows } = await db.query(`update stock ${updateQueries} where id=$${++bindNumber}`, [count, price, sizecolor[0], stockid]);
+      updateColumns.push(count && getUpdateQuery('count', ++bindNumber, count));
+      updateColumns.push(price && getUpdateQuery('price', ++bindNumber, price));
+      updateColumns.push(sizecolor[0] && getUpdateQuery('sizecolorid', ++bindNumber, sizecolor[0]));
+      const updateQueries = `set ` + updateColumns.filter(i => i).map(({query}) => query).join(", ");
+      const updateValues = updateColumns.filter(i => i).map(({value}) => value);
+      
+      const { rows } = await db.query(`update stock ${updateQueries} where id=$${++bindNumber}`, [...updateValues, stockid]);
       return res.json(rows);
 
     } catch(e) {
