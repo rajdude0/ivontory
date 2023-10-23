@@ -249,10 +249,7 @@ export const ImageDrop = ({ name, defaultImageFiles=[], onImagesOrderChanged = (
     }, [files])
 
     const handleUpload = () => {
-        if(hasImagesOrderChanged) {
-            onImagesOrderChanged(files);
-            setHasImagesOrderChanged(false);
-        }
+        
         const req = post('/api/upload');
         const filesToBeUploaded = files.filter(file => !file.uploaded)
         if(filesToBeUploaded.length > 0) {
@@ -270,6 +267,10 @@ export const ImageDrop = ({ name, defaultImageFiles=[], onImagesOrderChanged = (
                         onUpload({name, value: body.files});
                 })
         } else {
+            if(hasImagesOrderChanged) {
+                onImagesOrderChanged(files);
+                setHasImagesOrderChanged(false);
+            }
             setShowUpload(false);
         }
     }

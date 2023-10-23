@@ -9,9 +9,10 @@
     "build": "npx vite build"
   },
   "dependencies": {
+    "@prisma/client": "^5.4.2",
     "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",
-    "dotenv": "^16.0.3",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-fileupload": "^1.4.0",
     "express-session": "^1.17.3",
@@ -39,6 +40,11 @@
     "@types/react-dom": "^18.0.10",
     "@vitejs/plugin-react": "^3.1.0",
     "nodemon": "^3.0.1",
+    "prisma": "^5.4.2",
     "vite": "^4.0.4"
+  },
+  "prisma": {
+    "schema": "src/server/prisma/schema.prisma",
+    "seed": "node --experimental-modules src/server/prisma/seed.mjs"
   }
 }

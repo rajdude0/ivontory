@@ -1,0 +1,117 @@
+datasource db {
+    provider = "postgresql"
+    url = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Permissions {
+    id String @id @default(uuid())
+    name String?   @unique 
+    users Users[]
+}
+
+model Users {
+    id String @id @default(uuid())
+    username String? @unique
+    email String? @unique
+    password String?
+    phoneno String
+    permissison  Permissions @relation(fields: [permissionid], references: [id])
+    permissionid String @unique
+}
+
+model Tags {
+    id String @id @default(uuid())
+    name String? @unique
+    effecttype String
+    effectvalue Float
+    products Product[]
+}
+
+model Brands {
+    id String @id @default(uuid())
+    name String? @unique
+    origin String
+    products Product[]
+}
+
+model Category {
+    id String @id @default(uuid())
+    name String? @unique
+    products Product[]
+}
+
+model Gender {
+    id String @id @default(uuid())
+    name String? @unique
+    short String? @unique
+    sizegneder SizeGender[]
+}
+
+model Product {
+    id String @id @default(uuid())
+    name String? @unique
+    description String?
+    tag Tags @relation(fields: [tagid], references: [id])
+    brand Brands @relation(fields: [brandid], references: [id])
+    category Category @relation(fields: [categoryid], references: [id])
+    tagid String
+    brandid String
+    categoryid String
+    images Images[]
+    stock Stock[]
+}
+
+model Size {
+    id String @id @default(uuid())
+    name String? 
+    short String?
+    size String?
+    unit String?
+    sizegender SizeGender[]
+}
+
+model SizeGender {
+    id String @id @default(uuid())
+    sizeid String
+    genderid String
+    size Size @relation(fields: [sizeid], references: [id])
+    gender Gender @relation(fields: [genderid], references: [id])
+    sizecolor SizeColor[]
+}
+
+model Color {
+    id String @id @default(uuid())
+    name String?
+    code String?
+}
+
+model SizeColor {
+    id String @id @default(uuid())
+    sizegender SizeGender @relation(fields: [sizegenerid], references:[id])
+    sizegenerid String
+    images Images[]
+    stock Stock[]
+}
+
+model Images {
+    id String @id @default(uuid())
+    path String[]
+    productid String
+    sizecolorid String
+    product Product @relation(fields: [productid], references: [id])
+    sizecolor SizeColor @relation(fields: [sizecolorid], references: [id])
+}
+
+model Stock {
+    id String @id @default(uuid())
+    productid String
+    sizecolorid String
+    count Decimal
+    price Decimal
+    product Product @relation(fields: [productid], references: [id])
+    sizecolor SizeColor @relation(fields: [sizecolorid], references: [id])
+}

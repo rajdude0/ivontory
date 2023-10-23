@@ -69,7 +69,7 @@ apiRouter.get("/inventory", async(req, res) => {
                                     join gender on gender.id = sizegender.genderid
                                     join size on size.id = sizegender.sizeid 
                                     join category on category.id = product.categoryid 
-                                    join images on images.productid = product.id and images.sizecolorid = sizecolor.id 
+                                    join images on images.productid = product.id
                                     join brands on brands.id = product.brandid ${hasQuery ? 'where  ' + queryString : ''}`, queryValue)
     return res.json(rows);
 

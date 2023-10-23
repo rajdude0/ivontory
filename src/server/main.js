@@ -10,7 +10,9 @@ import passport  from 'passport';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import uid from 'uid-safe';
-import { BasicStrategy } from "passport-http"
+import {config} from 'dotenv';
+
+config();
 
 
 
