@@ -107,13 +107,137 @@ async function seedSize() {
   ]
   return await prisma.size.createMany({
     data: sizes,
-    skipDuplicates: true
+    skipDuplicates: true,
   })
 }
 
-async function seedProduct() {
+async function seedColor() {
+  const colors = [
+    {name: "White", code: "#ffffff"},
+    {name: "Black", code: "#000000"}
+  ]
 
+  return await prisma.color.createMany({
+    data: colors,
+    skipDuplicates: true
+  });
 }
+
+async function seedSizeGender(sizeid, genderid) {
+
+  return await prisma.sizeGender.upsert({
+    create: {
+      gender: {
+        connect: {id: genderid}
+      },
+      size: {
+        connect: {id: sizeid}
+      }
+    },
+    update: {},
+    where: {
+      sizeid_genderid: {
+        sizeid: sizeid,
+        genderid: genderid
+      }
+    }
+  }).then(data => data.id); 
+}
+
+async function seedSizeColor(sizegenderid, colorid) {
+  
+  return await prisma.sizeColor.upsert({
+    create: {
+      sizegender: {
+        connect: { id: sizegenderid}
+      }, 
+      color: {
+        connect: { id : colorid}
+      }      
+    },
+    update: {
+
+    },
+    where: {
+      colorid_sizegenerid: {
+        colorid: colorid,
+        sizegenerid: sizegenderid
+      }
+    }
+  }).then(data => data.id);
+}
+
+async function seedProduct(brandid, categoryid) {
+    return prisma.product.upsert({
+      where: {
+        name: "Nike White T-Shirt"
+      },
+      create: {
+        name: "Nike White T-Shirt",
+        description: "Cotton Nike T-Shirt 100% Cotton.",
+        category: {
+          connect: { id: categoryid}
+        },
+        brand: {
+          connect: {id: brandid}
+        }
+      },
+      update: {}
+      
+    }).then(data => data.id);
+}
+
+
+async function seedSKUwithImages(productid, sizecolorid) {
+
+  const images = ["-MvrMwlotZx_Bzxz7HVlT-f2450aa4db175234e983cd5a33b5c0f3.jpg", "-yDLDxCrr47qJ4X1Qq8Uw-5a36294edb9bbb0d747817da00e4140d", "0tkFUrakn-sC4WQBmGRI1-6b9f65213a981660aff5d7c2a5217321"]
+
+  return prisma.sKU.upsert({
+    where: {
+      productid_sizecolorid: {
+        productid,
+        sizecolorid
+      }
+    },
+    create: {
+      product: {
+        connect: {
+          id: productid
+        }
+      },
+      sizecolor: {
+        connect: {
+          id: sizecolorid
+        }
+      },
+      images: {
+        create: {
+          path: images
+        }
+      }
+    },
+    update: {}
+  }).then(({ id }) => id)
+}
+
+async function seedStock(skuid) {
+  return prisma.stock.upsert({
+    where: {
+      skuid
+    },
+    update: {},
+    create: {
+      count: 10,
+      price: 3000,
+      sku: {
+        connect: {
+          id: skuid
+        }
+      }  
+    } 
+  }).then(({id}) => id)
+}
+
 
 async function main() {
 
@@ -121,10 +245,82 @@ async function main() {
  const userid = await users(permsWithId);
  const brandCounts = await seedBrands();
  const categoryCount = await seedCategory();
+ const tshirtCategoryId = await prisma.category.findFirst({
+  where: {
+    name: "T-Shirt",
+  }
+ }).then(data => data.id);
+
+ const nikeBrandId = await prisma.brands.findFirst({
+  where: {
+    name: "Nike"
+  }
+ }).then(data => data.id);
+
  const genderCount = await seedGender();
  const tagsCount = await seedTags();
  const sizeCount = await seedSize();
- console.log(sizeCount)
+ const smallSizeId = await prisma.size.findFirst({
+  where: {
+    name: "Small"
+  }
+  }).then(data => data.id);
+
+  const maleGenderId = await prisma.gender.findFirst({
+    where: {
+      name: "Male"
+    }
+  }).then(data => data.id);
+
+ const sizegenderId = await seedSizeGender(smallSizeId, maleGenderId);
+
+ const colorscount = await seedColor();
+
+ const whiteColorId = await prisma.color.findFirst({
+  where: {
+    name: "White"
+  }
+ }).then(data => data.id);
+
+
+ const sizecolorid = await seedSizeColor(sizegenderId, whiteColorId);
+
+ const productId = await seedProduct(nikeBrandId, tshirtCategoryId);
+ const skuid = await seedSKUwithImages(productId, sizecolorid);
+ const stockid = await seedStock(skuid);
+ console.log(stockid)
+
+ const productDetail = await prisma.stock.findMany({
+    where: {
+      skuid: skuid
+    },
+    include: {
+      sku: {
+        include: {
+          images: true,
+          sizecolor: {
+            include: {
+              sizegender: {
+                include: {
+                  size: true,
+                  gender: true
+                }
+              },
+              color: true
+            }
+          },
+          product: {
+            include: {
+              category: true,
+              brand: true
+            }
+          },
+        }
+      }
+    }
+ })
+
+ console.log(JSON.stringify(productDetail), null, 2)
 }
 
 main()

@@ -55,14 +55,13 @@ model Product {
     id String @id @default(uuid())
     name String? @unique
     description String?
-    tag Tags @relation(fields: [tagid], references: [id])
+    tag Tags? @relation(fields: [tagid], references: [id])
     brand Brands @relation(fields: [brandid], references: [id])
     category Category @relation(fields: [categoryid], references: [id])
-    tagid String
+    tagid String?
     brandid String
     categoryid String
-    images Images[]
-    stock Stock[]
+    sku SKU[]
 }
 
 model Size {
@@ -81,37 +80,48 @@ model SizeGender {
     size Size @relation(fields: [sizeid], references: [id])
     gender Gender @relation(fields: [genderid], references: [id])
     sizecolor SizeColor[]
+    @@unique([sizeid, genderid])
 }
 
 model Color {
     id String @id @default(uuid())
     name String?
     code String?
+    sizecolor SizeColor[]
 }
 
 model SizeColor {
     id String @id @default(uuid())
     sizegender SizeGender @relation(fields: [sizegenerid], references:[id])
+    color Color @relation(fields: [colorid], references: [id])
+    colorid String
     sizegenerid String
-    images Images[]
-    stock Stock[]
+    sku SKU[]
+    @@unique([colorid, sizegenerid])
+}
+
+model SKU {
+    id String @id @default(uuid())
+    productid String?
+    sizecolorid String?
+    imageid String?
+    product Product? @relation(fields: [productid], references: [id])
+    sizecolor SizeColor? @relation(fields: [sizecolorid], references: [id])
+    images Images? @relation(fields: [imageid], references: [id])
+    @@unique([productid, sizecolorid])
+    stocks Stock[]
 }
 
 model Images {
     id String @id @default(uuid())
     path String[]
-    productid String
-    sizecolorid String
-    product Product @relation(fields: [productid], references: [id])
-    sizecolor SizeColor @relation(fields: [sizecolorid], references: [id])
+    sku SKU[]
 }
 
 model Stock {
     id String @id @default(uuid())
-    productid String
-    sizecolorid String
     count Decimal
     price Decimal
-    product Product @relation(fields: [productid], references: [id])
-    sizecolor SizeColor @relation(fields: [sizecolorid], references: [id])
+    skuid String? @unique
+    sku SKU? @relation(fields: [skuid], references: [id])
 }

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { check, validationResult } from "express-validator";
+import {  validationResult } from "express-validator";
 import { arrayValidate, numberValidate, objectValidate, stringValidate, uuidValidate } from "./validator.js";
 import { db } from "./db.js";
 import path from 'path'
@@ -197,14 +197,14 @@ apiRouter.post('/upload', async (req, res, next) => {
     const uploadedFilesNames = [];
     if(fileKeys.length > 0) {
         try { 
-        for(const key of fileKeys ) {
-            const filemd5 = req.files[key].md5;
-            const uniqueId = nanoid();
-            const fileExt = path.extname(req.files[key].name);
-            const filename = `${uniqueId}-${filemd5}${fileExt}`
-            uploadedFilesNames.push(filename);
-            await req.files[key].mv(path.join(path.resolve(), "uploads", filename));
-        }
+            for(const key of fileKeys ) {
+                const filemd5 = req.files[key].md5;
+                const uniqueId = nanoid();
+                const fileExt = path.extname(req.files[key].name);
+                const filename = `${uniqueId}-${filemd5}${fileExt}`
+                uploadedFilesNames.push(filename);
+                await req.files[key].mv(path.join(path.resolve(), "uploads", filename));
+            }
         } catch (e) {
             return mrError(next, res, e);
         }
